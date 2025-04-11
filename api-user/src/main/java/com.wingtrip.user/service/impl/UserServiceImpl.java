@@ -2,8 +2,7 @@ package com.wingtrip.user.service.impl;
 
 import com.wingtrip.user.controller.request.UserRequest;
 import com.wingtrip.user.dto.UserDTO;
-import com.wingtrip.user.exception.MessageCode;
-import com.wingtrip.user.exception.UserException;
+import com.wingtrip.user.exception.*;
 import com.wingtrip.user.model.UserEntity;
 import com.wingtrip.user.repository.UserRepository;
 import com.wingtrip.user.service.UserService;
@@ -32,7 +31,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) throws UserException {
+    public UserDTO createUser(UserDTO userDTO) throws UserNotCreateException {
         try {
             UserEntity userEntity = UserEntity.builder()
                     .name(userDTO.getName())
@@ -46,33 +45,33 @@ public class UserServiceImpl implements UserService {
             return new UserDTO(saveEntity);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new UserException(MessageCode.USER_NOT_CREATE);
+            throw new UserNotCreateException(MessageCode.USER_NOT_CREATE);
         }
     }
 
     @Override
-    public UserDTO findByUsername(String username) throws UserException {
+    public UserDTO findByUsername(String username) throws UsernameNotFoundException {
         if (username == null) {
-            throw new UserException(MessageCode.USERNAME_NULL);
+            throw new UsernameNotFoundException(MessageCode.USERNAME_NULL);
         }
 
         Optional<UserEntity> entityOptional = userRepository.findByUsername(username);
         if (entityOptional.isPresent()) {
             return new UserDTO(entityOptional.get());
         } else {
-            throw new UserException(MessageCode.USER_NOT_EXIST);
+            throw new UsernameNotFoundException(MessageCode.USER_NOT_EXIST);
         }
     }
 
     @Override
-    public UserDTO findUserById(Long userId) throws UserException {
+    public UserDTO findUserById(Long userId) throws UserIdNotFoundException {
         if (userId == null) {
-            throw new UserException(MessageCode.USER_ID_NOT_FOUND);
+            throw new UserIdNotFoundException(MessageCode.USER_ID_NOT_FOUND);
         }
 
         Optional<UserEntity> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
-            throw new UserException(MessageCode.USER_ID_NOT_FOUND);
+            throw new UserIdNotFoundException(MessageCode.USER_ID_NOT_FOUND);
         }
 
         UserEntity userEntity = optionalUser.get();
@@ -80,14 +79,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUserById(Long userId, UserRequest userRequest) throws UserException {
+    public UserDTO updateUserById(Long userId, UserRequest userRequest) throws UserIdNotFoundException {
         if (userId == null) {
-            throw new UserException(MessageCode.USERNAME_NULL);
+            throw new UserIdNotFoundException(MessageCode.USERNAME_NULL);
         }
 
         Optional<UserEntity> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
-            throw new UserException(MessageCode.USER_ID_NOT_FOUND);
+            throw new UserIdNotFoundException(MessageCode.USER_ID_NOT_FOUND);
         }
 
         UserEntity userEntity = optionalUser.get();
@@ -104,14 +103,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUserByUsername(String username, UserRequest userRequest) throws UserException {
+    public UserDTO updateUserByUsername(String username, UserRequest userRequest) throws UsernameNotFoundException {
         if (username == null) {
-            throw new UserException(MessageCode.USERNAME_NULL);
+            throw new UsernameNotFoundException(MessageCode.USERNAME_NULL);
         }
 
         Optional<UserEntity> userEntity = userRepository.findByUsername(username);
         if (userEntity.isEmpty()) {
-            throw new UserException(MessageCode.USER_NOT_FOUND);
+            throw new UsernameNotFoundException(MessageCode.USER_NOT_FOUND);
         }
 
         UserEntity userEntity1 = userEntity.get();
@@ -127,29 +126,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existByEmail(String email) throws UserException {
-        if (email == null) {
-            throw new UserException(MessageCode.EMAIL_USER_NOT_FOUND);
-        } else {
-            return userRepository.existsByEmail(email);
+    public boolean existByEmail(String email) throws EmailNotFoundException, EmailAlreadyExistsException {
+        if (email == null || email.isBlank()) {
+            throw new EmailNotFoundException(MessageCode.EMAIL_USER_NOT_FOUND);
         }
+        boolean exists = userRepository.existsByEmail(email);
+        if (exists) {
+            throw new EmailAlreadyExistsException(MessageCode.EMAIL_CREATE_BEFORE);
+        }
+        return false;
     }
 
     @Override
-    public boolean existByUsername(String username) throws UserException {
-        if (username == null) {
-            throw new UserException(MessageCode.USERNAME_NOT_FOUND);
-        } else {
-          return  userRepository.existsByUsername(username);
+    public boolean existByUsername(String username) throws UsernameNotFoundException, UsernameAlreadyExistsException {
+        if (username == null || username.isBlank()) {
+            throw new UsernameNotFoundException(MessageCode.USERNAME_NOT_FOUND);
         }
+        boolean exists = userRepository.existsByUsername(username);
+        if (exists) {
+            throw new UsernameAlreadyExistsException(MessageCode.USERNAME_CREATE_BEFORE);
+        }
+        return false;
     }
 
     @Override
-    public boolean deleteUserById(Long userId) throws UserException {
+    public boolean deleteUserById(Long userId) throws UserDeleteFailedException {
         Optional<UserEntity> optionalUser = userRepository.findById(userId);
 
         if (optionalUser.isEmpty()) {
-            throw new UserException(MessageCode.USER_ID_NOT_FOUND);
+            throw new UserDeleteFailedException(MessageCode.USER_ID_NOT_FOUND);
         } else {
             userRepository.deleteById(userId);
             return true;

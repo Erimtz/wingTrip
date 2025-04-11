@@ -2,7 +2,7 @@ package com.wingtrip.user.service.impl;
 
 import com.wingtrip.user.controller.request.UserRequest;
 import com.wingtrip.user.dto.UserDTO;
-import com.wingtrip.user.exception.UserException;
+import com.wingtrip.user.exception.*;
 import com.wingtrip.user.model.UserEntity;
 import com.wingtrip.user.repository.UserRepository;
 import org.jeasy.random.EasyRandom;
@@ -36,7 +36,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void getAllUsers() throws UserException {
+    void getAllUsers() {
         //Lista UserEntities con valores aleatorios
         List<UserEntity> userEntities = easyRandom.objects(UserEntity.class, 2).toList();
 
@@ -70,7 +70,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void createUser() throws UserException {
+    void createUser() throws UserNotCreateException {
         UserDTO userDTO = easyRandom.nextObject(UserDTO.class);
 
         UserEntity userEntity = UserEntity.builder()
@@ -96,7 +96,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findByUsername() throws UserException {
+    void findByUsername() throws UsernameNotFoundException {
         UserEntity userEntity = easyRandom.nextObject(UserEntity.class);
         UserDTO userDTO = easyRandom.nextObject(UserDTO.class);
 
@@ -110,7 +110,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findUserById() throws UserException {
+    void findUserById() throws UserIdNotFoundException {
         UserDTO userDTO = easyRandom.nextObject(UserDTO.class);
         UserEntity userEntity = easyRandom.nextObject(UserEntity.class);
 
@@ -123,7 +123,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void updateUserById() throws UserException {
+    void updateUserById() throws UserIdNotFoundException {
         UserDTO userDTO = easyRandom.nextObject(UserDTO.class);
         UserEntity userEntity = easyRandom.nextObject(UserEntity.class);
         userEntity.setUserId(userDTO.getId()); //Asigna el mismo ID que el del UserDTO
@@ -146,7 +146,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void updateUserByUsername() throws UserException {
+    void updateUserByUsername() throws UsernameNotFoundException {
         UserDTO userDTO = easyRandom.nextObject(UserDTO.class);
         UserEntity userEntity = easyRandom.nextObject(UserEntity.class);
         userEntity.setUserId(userDTO.getId());
@@ -169,7 +169,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void existByEmail() throws UserException {
+    void existByEmail() throws EmailNotFoundException, EmailAlreadyExistsException {
         String email = "pepito@example.com";
 
         when(userRepository.existsByEmail(email)).thenReturn(true);
@@ -179,7 +179,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void existByUsername() throws UserException {
+    void existByUsername() throws UsernameNotFoundException, UsernameAlreadyExistsException {
         String username = "pepito";
 
         when(userRepository.existsByUsername(username)).thenReturn(true);
@@ -189,7 +189,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void deleteUserById() throws UserException {
+    void deleteUserById() throws UserDeleteFailedException {
         Long userId = 12L;
         UserEntity userEntity = easyRandom.nextObject(UserEntity.class);
 
