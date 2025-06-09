@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-  name: eurekaServer
+  name: eureka-server
 
 eureka:
   instance:
@@ -13,3 +13,7 @@ eureka:
     fetchRegistry: false
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    enableSelfPreservation: false
+    waitTimeInMsWhenSyncEmpty: 3000
+    evictionIntervalTimerInMs: 15000

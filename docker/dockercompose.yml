@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  wingtrip-network:
+    driver: bridge
+
 services:
   mysql-user:
     image: mysql:8.0
@@ -13,44 +17,92 @@ services:
       - '3310:3306'
     volumes:
       - mysql-user-data:/var/lib/mysql
+      - ./api-user/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
+      - ./api-user/src/main/resources/data.sql:/docker-entrypoint-initdb.d/2_data.sql
     env_file:
       - .env
-
-  eureka-server:
-    image: eurekaserver:latest
-    container_name: eureka-server
-    build: ./eureka-server
-    ports:
-      - "8761:8761"
-    env_file:
-      - .env
+    networks:
+      - wingtrip-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+      start_period: 40s
 
   config-server:
+    build: ./config-server
     image: configserver:latest
     container_name: config-server
-    build: ./config-server
     ports:
       - "8888:8888"
     env_file:
       - .env
+    networks:
+      - wingtrip-network
+    healthcheck:
+        test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8888/actuator/health" ]
+        timeout: 10s
+        retries: 5
+        interval: 15s
+        start_period: 30s
+
+  eureka-server:
+    build: ./eureka-server
+    image: eurekaserver:latest
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    env_file:
+      - .env
+    depends_on:
+      config-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8761/actuator/health"]
+      timeout: 10s
+      retries: 5
+      interval: 15s
+      start_period: 30s
 
   zipkin:
     image: openzipkin/zipkin
     container_name: zipkin
     ports:
       - "9411:9411"
+    networks:
+      - wingtrip-network
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9411/health" ]
+      timeout: 10s
+      retries: 3
+      interval: 30s
 
   api-user:
     build: ./api-user
     container_name: api-user
     depends_on:
-      - mysql-user
-      - config-server
-      - eureka-server
+      mysql-user:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
     ports:
-      - "8083:8080"
+      - "8081:8080"
     env_file:
       - .env
+    networks:
+      - wingtrip-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health" ]
+      timeout: 10s
+      retries: 5
+      interval: 20s
+      start_period: 60s
+    restart: on-failure
 
   api-gateway:
     build: ./api-gateway
@@ -58,9 +110,25 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - api-user
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      api-user:
+        condition: service_healthy
     env_file:
       - .env
+    networks:
+      - wingtrip-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health" ]
+      timeout: 10s
+      retries: 5
+      interval: 20s
+      start_period: 60s
+    restart: on-failure
 
 volumes:
   mysql-user-data:
