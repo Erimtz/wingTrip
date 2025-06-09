@@ -17,7 +17,7 @@ public enum MessageCode {
     USERNAME_CREATE_BEFORE("The username has been create before."),
     USERNAME_NULL("The user is null."),
     //SEAT_NOT_LIMIT("Limit exceeded."),
-    USER_NOT_TOTAL_AMOUNT_EQUALS("Verify details of amounts."),
+    //USER_NOT_TOTAL_AMOUNT_EQUALS("Verify details of amounts."),
     USER_DELETE_FAILED("The deletion was not processed correctly.");
 
     private final String msg;

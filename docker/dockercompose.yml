@@ -1,62 +1,67 @@
 version: '3.8'
 
 services:
-  mysql-account:
-    image: mysql:8.0
-    container_name: mysql-account
-    environment:
-      MYSQL_ROOT_PASSWORD: 'rootpassword'
-      MYSQL_DATABASE: 'account_db'
-      MYSQL_USER: ${DATABASE_USERNAME}
-      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
-    ports:
-      - '3307:3306'
-    expose:
-      - '3307'
-    volumes:
-      - mysql-account-data:/var/lib/mysql
-    env_file:
-      - .env
-
   mysql-user:
     image: mysql:8.0
     container_name: mysql-user
     environment:
-      MYSQL_ROOT_PASSWORD: 'rootpassword'
+      MYSQL_ROOT_PASSWORD: 'root'
       MYSQL_DATABASE: 'user_db'
       MYSQL_USER: ${DATABASE_USERNAME}
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
     ports:
-      - '3308:3306'
-    expose:
-      - '3308'
+      - '3310:3306'
     volumes:
       - mysql-user-data:/var/lib/mysql
     env_file:
       - .env
 
-  api-account:
-    image: mysql:8.0
-    environment:
-      DATABASE_URL: jdbc:mysql://mysql-account:3306/account_db
-      DATABASE_USERNAME: ${DATABASE_USERNAME}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-    depends_on:
-      - mysql-account
+  eureka-server:
+    image: eurekaserver:latest
+    container_name: eureka-server
+    build: ./eureka-server
     ports:
-      - "8086:8086"
+      - "8761:8761"
+    env_file:
+      - .env
+
+  config-server:
+    image: configserver:latest
+    container_name: config-server
+    build: ./config-server
+    ports:
+      - "8888:8888"
+    env_file:
+      - .env
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
 
   api-user:
-    image: mysql:8.0
-    environment:
-      DATABASE_URL: jdbc:mysql://mysql-user:3306/user_db
-      DATABASE_USERNAME: ${DATABASE_USERNAME}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+    build: ./api-user
+    container_name: api-user
     depends_on:
       - mysql-user
+      - config-server
+      - eureka-server
     ports:
-      - "8087:8087"
+      - "8083:8080"
+    env_file:
+      - .env
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api-user
+    env_file:
+      - .env
 
 volumes:
-  mysql-account-data:
   mysql-user-data:
+

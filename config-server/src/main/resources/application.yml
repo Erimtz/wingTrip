@@ -1,8 +1,8 @@
 server:
   port: ${PORT:8888}
 
-SPRING:
-  APPLICATION:
+spring:
+  application:
     name: config-server
   cloud:
     config:
