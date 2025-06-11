@@ -11,4 +11,5 @@ spring:
           uri: https://github.com/Erimtz/configData_wingTrip
           default-label: master
           force-pull: true
-          search-paths: configData_wingTrip
+          # Solo para debugging
+          clone-on-start: true
