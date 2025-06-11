@@ -1,7 +1,8 @@
 # Default ignored files
 .idea
 .mvn
-target/target/
+target/
 *.jar
 *.war
 *.class
+*.original
