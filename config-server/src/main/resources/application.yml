@@ -9,6 +9,6 @@ spring:
       server:
         git:
           uri: https://github.com/Erimtz/configData_wingTrip
-          default-label: main
+          default-label: master
           force-pull: true
           search-paths: configData_wingTrip
