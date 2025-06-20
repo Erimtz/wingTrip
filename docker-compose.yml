@@ -40,10 +40,10 @@ services:
       - wingtrip-network
     healthcheck:
         test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8888/actuator/health" ]
-        timeout: 10s
-        retries: 5
+        timeout: 15s
+        retries: 8
         interval: 15s
-        start_period: 30s
+        start_period: 45s
 
   eureka-server:
     build: ./eureka-server
@@ -53,15 +53,17 @@ services:
       - "8761:8761"
     env_file:
       - .env
+    networks:
+      - wingtrip-network
     depends_on:
       config-server:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8761/actuator/health"]
-      timeout: 10s
-      retries: 5
+      timeout: 15s
+      retries: 8
       interval: 15s
-      start_period: 30s
+      start_period: 60s
 
   zipkin:
     image: openzipkin/zipkin
@@ -75,6 +77,26 @@ services:
       timeout: 10s
       retries: 3
       interval: 30s
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" #Puerto AMQP
+      - "15672:15672" #Puerto Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    networks:
+      - wingtrip-network
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
+      timeout: 30s
+      retries: 5
+      interval: 30s
+      start_period: 60s
 
   api-user:
     build: ./api-user
@@ -94,11 +116,16 @@ services:
       - wingtrip-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - EUREKA_CLIENT_FETCH_REGISTRY=true
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - EUREKA_CLIENT_HEALTHCHECK_ENABLED=true
     healthcheck:
-      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health" ]
-      timeout: 10s
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      timeout: 15s
       retries: 5
-      interval: 20s
+      interval: 30s
       start_period: 60s
     restart: on-failure
 
@@ -113,21 +140,22 @@ services:
       eureka-server:
         condition: service_healthy
       api-user:
-        condition: service_healthy
+        condition: service_started
     env_file:
       - .env
     networks:
       - wingtrip-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
     healthcheck:
       test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health" ]
-      timeout: 10s
-      retries: 5
+      timeout: 15s
+      retries: 8
       interval: 20s
-      start_period: 60s
+      start_period: 90s
     restart: on-failure
 
 volumes:
   mysql-user-data:
-
+  rabbitmq-data:
