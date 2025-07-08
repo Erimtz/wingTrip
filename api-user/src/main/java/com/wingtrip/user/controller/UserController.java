@@ -1,5 +1,6 @@
 package com.wingtrip.user.controller;
 
+import com.wingtrip.user.controller.doc.UserControllerDoc;
 import com.wingtrip.user.controller.mapper.UserMapper;
 import com.wingtrip.user.controller.request.UserRequest;
 import com.wingtrip.user.controller.response.UserResponse;
@@ -8,6 +9,10 @@ import com.wingtrip.user.dto.UserDTO;
 import com.wingtrip.user.exception.*;
 import com.wingtrip.user.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,21 +20,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Tag(name = "User API")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/api/v1/user")
-public class UserController {
+public class UserController implements UserControllerDoc {
 
     private final UserMapper userMapper;
 
     private final UserServiceImpl userService;
 
-    @Operation(summary = "Get all the users")
+    @Override
     @GetMapping("/get-all")
     public ResponseEntity<List<UserResponseWithoutMessage>> getAllUsers() {
         List<UserDTO> userDTOS = userService.getAllUsers();
@@ -39,7 +45,7 @@ public class UserController {
         return ResponseEntity.ok(userResponses);
     }
 
-    @Operation(summary = "Created new user")
+    @Override
     @PostMapping("/create")
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userRequest) throws UserNotCreateException {
         try {
@@ -66,7 +72,7 @@ public class UserController {
 
     }
 
-    @Operation(summary = "Search user by username")
+    @Override
     @GetMapping("/profile/{username}")
     public ResponseEntity<UserResponse> findByUsername(@PathVariable String username) throws UsernameNotFoundException {
         UserDTO userDTO = userService.findByUsername(username);
@@ -77,7 +83,7 @@ public class UserController {
         return ResponseEntity.ok(userResponse);
     }
 
-    @Operation(summary = "Search user by ID")
+    @Override
     @GetMapping("/find/{id}")
     public ResponseEntity<UserResponse> findUserById(@PathVariable Long id) throws UserIdNotFoundException {
         UserDTO userDTO = userService.findUserById(id);
@@ -88,7 +94,7 @@ public class UserController {
         return ResponseEntity.ok(userResponse);
     }
 
-    @Operation(summary = "Update the user by username")
+    @Override
     @PutMapping("/update/username/{username}")
     public ResponseEntity<UserResponse> updateUserByUsername(@PathVariable String username, @RequestBody UserRequest userRequest) throws UsernameNotFoundException {
         UserDTO updateUser = userService.updateUserByUsername(username, userRequest);
@@ -99,7 +105,7 @@ public class UserController {
         return ResponseEntity.ok(userResponse);
     }
 
-    @Operation(summary = "Update the user by ID")
+    @Override
     @PutMapping("/update/id/{id}")
     public ResponseEntity<UserResponse> updateUserById(@PathVariable Long id, @RequestBody UserRequest userRequest) throws UserIdNotFoundException {
         UserDTO toRequest = userService.updateUserById(id, userRequest);
@@ -110,8 +116,8 @@ public class UserController {
         return ResponseEntity.ok(userResponse);
     }
 
-    @Operation(summary = "Exist by email")
-    @GetMapping("/existByEmail")
+    @Override
+    @GetMapping("/existByEmail/{email}")
     public ResponseEntity<Boolean> existByEmail(@PathVariable String email) throws EmailNotFoundException, EmailAlreadyExistsException {
         boolean existed = userService.existByEmail(email);
 
@@ -121,8 +127,8 @@ public class UserController {
         return ResponseEntity.ok(existed);
     }
 
-    @Operation(summary = "Exist by username")
-    @GetMapping("/existsByUsername")
+    @Override
+    @GetMapping("/existsByUsername/{username}")
     public ResponseEntity<Boolean> existByUsername(@PathVariable String username) throws UsernameNotFoundException, UsernameAlreadyExistsException {
         boolean existed = userService.existByUsername(username);
 
@@ -132,7 +138,7 @@ public class UserController {
         return ResponseEntity.ok(existed);
     }
 
-    @Operation(summary = "Delete user by ID")
+    @Override
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteUserById(@PathVariable Long id) throws UserDeleteFailedException {
         boolean isDeleted = userService.deleteUserById(id);

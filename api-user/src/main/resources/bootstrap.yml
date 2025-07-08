@@ -22,14 +22,17 @@ spring:
       deserialization:
         FAIL_ON_UNKNOWN_PROPERTIES: false
 
-  spring-doc:
+  springdoc:
     api-docs:
-      path: /v3/api-user
+      path: /v3/api-docs
+      enabled: true
     swagger-ui:
-      path: /api-docs/swagger-ui.html
-      enable: true
+      path: /swagger-ui.html
+      enabled: true
     show-actuator: true
     packages-to-scan: com.wingtrip.user.controller
+    default-consumes-media-type: application/json
+    default-produces-media-type: application/json
 
   eureka:
     client:
