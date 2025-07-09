@@ -3,6 +3,8 @@ package com.wingtrip.user.controller;
 import com.wingtrip.user.controller.doc.UserControllerDoc;
 import com.wingtrip.user.controller.mapper.UserMapper;
 import com.wingtrip.user.controller.request.UserRequest;
+import com.wingtrip.user.controller.response.DeleteResponse;
+import com.wingtrip.user.controller.response.ExistenceResponse;
 import com.wingtrip.user.controller.response.UserResponse;
 import com.wingtrip.user.controller.response.UserResponseWithoutMessage;
 import com.wingtrip.user.dto.UserDTO;
@@ -116,36 +118,49 @@ public class UserController implements UserControllerDoc {
         return ResponseEntity.ok(userResponse);
     }
 
+    @GetMapping("/validateEmail/{email}")
+    public ResponseEntity<ExistenceResponse> validateEmail(@PathVariable String email) throws EmailNotFoundException, EmailAlreadyExistsException {
+        userService.validateEmailNotExists(email);
+        ExistenceResponse response = new ExistenceResponse(true, "Email is available", email);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/validateUsername/{username}")
+    public ResponseEntity<ExistenceResponse> validateUsername(@PathVariable String username) throws UsernameNotFoundException, UsernameAlreadyExistsException {
+        userService.validateUsernameNotExists(username);
+        ExistenceResponse response = new ExistenceResponse(true, "Username is available", username);
+        return ResponseEntity.ok(response);
+    }
+
     @Override
     @GetMapping("/existByEmail/{email}")
-    public ResponseEntity<Boolean> existByEmail(@PathVariable String email) throws EmailNotFoundException, EmailAlreadyExistsException {
-        boolean existed = userService.existByEmail(email);
+    public ResponseEntity<ExistenceResponse> existByEmail(@PathVariable String email) {
+        boolean exists = userService.existByEmail(email);
+        String message = exists ? "Email already exists" : "Email not found";
 
-        if (existed) {
-            log.info("The email already exists: " + email);
-        }
-        return ResponseEntity.ok(existed);
+        ExistenceResponse response = new ExistenceResponse(exists, message, email);
+        return ResponseEntity.ok(response);
     }
 
     @Override
     @GetMapping("/existsByUsername/{username}")
-    public ResponseEntity<Boolean> existByUsername(@PathVariable String username) throws UsernameNotFoundException, UsernameAlreadyExistsException {
-        boolean existed = userService.existByUsername(username);
+    public ResponseEntity<ExistenceResponse> existByUsername(@PathVariable String username) {
+        boolean exists = userService.existByUsername(username);
+        String message = exists ? "Username already exists" : "Username not found";
 
-        if (existed) {
-            log.info("The username already exists: " + username);
-        }
-        return ResponseEntity.ok(existed);
+        ExistenceResponse response = new ExistenceResponse(exists, message, username);
+        return ResponseEntity.ok(response);
     }
 
     @Override
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteUserById(@PathVariable Long id) throws UserDeleteFailedException {
+    public ResponseEntity<DeleteResponse> deleteUserById(@PathVariable Long id) throws UserDeleteFailedException {
         boolean isDeleted = userService.deleteUserById(id);
 
         if (isDeleted) {
-            log.info("Delete by user ID successfully with data: {}", id);
-            return ResponseEntity.noContent().build();
+            log.info("User deleted successfully with ID: {}", id);
+            DeleteResponse response = new DeleteResponse("Usuario eliminado correctamente", id);
+            return ResponseEntity.ok(response);
         } else {
             throw new UserDeleteFailedException(MessageCode.USER_DELETE_FAILED);
         }

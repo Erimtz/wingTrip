@@ -1,6 +1,8 @@
 package com.wingtrip.user.controller.doc;
 
 import com.wingtrip.user.controller.request.UserRequest;
+import com.wingtrip.user.controller.response.DeleteResponse;
+import com.wingtrip.user.controller.response.ExistenceResponse;
 import com.wingtrip.user.controller.response.UserResponse;
 import com.wingtrip.user.controller.response.UserResponseWithoutMessage;
 import com.wingtrip.user.exception.*;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Users", description = "User management API - WingTrip User Service")
 public interface UserControllerDoc {
@@ -155,6 +158,29 @@ public interface UserControllerDoc {
     ResponseEntity<UserResponse> updateUserById(@PathVariable Long id, @RequestBody UserRequest userRequest) throws UserIdNotFoundException;
 
 
+    @ApiResponse(
+            responseCode = "200",
+            description = "Verification completed successfully",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ExistenceResponse.class)
+            )
+    )
+    ResponseEntity<ExistenceResponse> validateEmail(@PathVariable String email) throws EmailNotFoundException, EmailAlreadyExistsException;
+
+
+    @ApiResponse(
+            responseCode = "200",
+            description = "Verification completed successfully",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ExistenceResponse.class)
+            )
+    )
+    ResponseEntity<ExistenceResponse> validateUsername(@PathVariable String username) throws UsernameNotFoundException, UsernameAlreadyExistsException;
+
+
+
     @Operation(summary = "Exist by email",
             description = "Check if a registered user already exists with the provided email address.")
     @ApiResponses(value = {
@@ -172,7 +198,7 @@ public interface UserControllerDoc {
                     content = @Content
             )
     })
-    ResponseEntity<Boolean> existByEmail(@PathVariable String email) throws EmailNotFoundException, EmailAlreadyExistsException;
+    ResponseEntity<ExistenceResponse> existByEmail(@PathVariable String email);
 
 
     @Operation(summary = "Exist by username",
@@ -192,15 +218,19 @@ public interface UserControllerDoc {
                     content = @Content
             )
     })
-    ResponseEntity<Boolean> existByUsername(@PathVariable String username) throws UsernameNotFoundException, UsernameAlreadyExistsException;
+    ResponseEntity<ExistenceResponse> existByUsername(@PathVariable String username);
 
 
     @Operation(summary = "Delete user by ID",
             description = "Permanently deletes a user from the system using their unique ID.")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "204",
-                    description = "User successfully deleted"
+                    responseCode = "200",
+                    description = "User successfully deleted",
+                    content = @Content(
+                    mediaType = "application/json",
+                            schema = @Schema(implementation = DeleteResponse.class)
+                    )
             ),
             @ApiResponse(
                     responseCode = "404",
@@ -213,5 +243,5 @@ public interface UserControllerDoc {
                     content = @Content
             )
     })
-    ResponseEntity<String> deleteUserById(@PathVariable Long id) throws UserDeleteFailedException;
+    ResponseEntity<DeleteResponse> deleteUserById(@PathVariable Long id) throws UserDeleteFailedException;
 }

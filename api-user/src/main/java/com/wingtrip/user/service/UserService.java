@@ -13,7 +13,9 @@ public interface UserService {
     UserDTO findUserById(Long userId) throws UserIdNotFoundException;
     UserDTO updateUserById(Long userId, UserRequest userRequest) throws UserIdNotFoundException;
     UserDTO updateUserByUsername(String username, UserRequest userRequest) throws UsernameNotFoundException;
-    boolean existByEmail(String email) throws EmailNotFoundException, EmailAlreadyExistsException;
-    boolean existByUsername(String username) throws UsernameNotFoundException, UsernameAlreadyExistsException;
+    void validateEmailNotExists(String email) throws EmailNotFoundException, EmailAlreadyExistsException;
+    void validateUsernameNotExists(String username) throws UsernameNotFoundException, UsernameAlreadyExistsException;
+    boolean existByEmail(String email);
+    boolean existByUsername(String username);
     boolean deleteUserById(Long userId) throws UserDeleteFailedException;
 }

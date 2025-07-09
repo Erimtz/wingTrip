@@ -126,27 +126,45 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existByEmail(String email) throws EmailNotFoundException, EmailAlreadyExistsException {
+    public void validateEmailNotExists(String email) throws EmailNotFoundException, EmailAlreadyExistsException {
         if (email == null || email.isBlank()) {
             throw new EmailNotFoundException(MessageCode.EMAIL_USER_NOT_FOUND);
         }
+
+        // Verificar si ya existe en la base de datos
         boolean exists = userRepository.existsByEmail(email);
         if (exists) {
             throw new EmailAlreadyExistsException(MessageCode.EMAIL_CREATE_BEFORE);
         }
-        return false;
     }
 
     @Override
-    public boolean existByUsername(String username) throws UsernameNotFoundException, UsernameAlreadyExistsException {
+    public void validateUsernameNotExists(String username) throws UsernameNotFoundException, UsernameAlreadyExistsException {
         if (username == null || username.isBlank()) {
             throw new UsernameNotFoundException(MessageCode.USERNAME_NOT_FOUND);
         }
+
+        // Verificar si ya existe en la base de datos
         boolean exists = userRepository.existsByUsername(username);
         if (exists) {
             throw new UsernameAlreadyExistsException(MessageCode.USERNAME_CREATE_BEFORE);
         }
-        return false;
+    }
+
+    @Override
+    public boolean existByEmail(String email) {
+        if (email == null || email.isBlank()) {
+            return false;
+        }
+        return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existByUsername(String username) {
+        if (username == null || username.isBlank()) {
+            return false;
+        }
+        return userRepository.existsByUsername(username);
     }
 
     @Override
