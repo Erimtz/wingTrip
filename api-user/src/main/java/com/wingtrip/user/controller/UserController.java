@@ -10,21 +10,13 @@ import com.wingtrip.user.controller.response.UserResponseWithoutMessage;
 import com.wingtrip.user.dto.UserDTO;
 import com.wingtrip.user.exception.*;
 import com.wingtrip.user.service.impl.UserServiceImpl;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -55,11 +47,11 @@ public class UserController implements UserControllerDoc {
             UserDTO dtoToRequest = userMapper.toDTO(userRequest);
 
             log.info("Checking if email exists {}:", dtoToRequest.getEmail());
-            if (userService.existByEmail(dtoToRequest.getEmail())) {
+            if (userService.existsByEmail(dtoToRequest.getEmail())) {
                 throw new UserNotCreateException(MessageCode.EMAIL_CREATE_BEFORE);
             }
 
-            if (userService.existByUsername(dtoToRequest.getUsername())) {
+            if (userService.existsByUsername(dtoToRequest.getUsername())) {
                 throw new UserNotCreateException(MessageCode.USERNAME_CREATE_BEFORE);
             }
             UserDTO createdUser = userService.createUser(dtoToRequest);
@@ -133,9 +125,9 @@ public class UserController implements UserControllerDoc {
     }
 
     @Override
-    @GetMapping("/existByEmail/{email}")
-    public ResponseEntity<ExistenceResponse> existByEmail(@PathVariable String email) {
-        boolean exists = userService.existByEmail(email);
+    @GetMapping("/existsByEmail/{email}")
+    public ResponseEntity<ExistenceResponse> existsByEmail(@PathVariable String email) {
+        boolean exists = userService.existsByEmail(email);
         String message = exists ? "Email already exists" : "Email not found";
 
         ExistenceResponse response = new ExistenceResponse(exists, message, email);
@@ -144,8 +136,8 @@ public class UserController implements UserControllerDoc {
 
     @Override
     @GetMapping("/existsByUsername/{username}")
-    public ResponseEntity<ExistenceResponse> existByUsername(@PathVariable String username) {
-        boolean exists = userService.existByUsername(username);
+    public ResponseEntity<ExistenceResponse> existsByUsername(@PathVariable String username) {
+        boolean exists = userService.existsByUsername(username);
         String message = exists ? "Username already exists" : "Username not found";
 
         ExistenceResponse response = new ExistenceResponse(exists, message, username);

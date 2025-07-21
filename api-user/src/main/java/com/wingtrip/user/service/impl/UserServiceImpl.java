@@ -152,7 +152,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existByEmail(String email) {
+    public boolean existsByEmail(String email) {
         if (email == null || email.isBlank()) {
             return false;
         }
@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existByUsername(String username) {
+    public boolean existsByUsername(String username) {
         if (username == null || username.isBlank()) {
             return false;
         }

@@ -3,6 +3,7 @@ package com.wingtrip.user.dto;
 
 import com.wingtrip.user.model.UserEntity;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class UserDTO {
 
     private Long id;

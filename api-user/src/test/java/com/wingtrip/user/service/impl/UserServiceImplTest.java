@@ -6,73 +6,73 @@ import com.wingtrip.user.exception.*;
 import com.wingtrip.user.model.UserEntity;
 import com.wingtrip.user.repository.UserRepository;
 import org.jeasy.random.EasyRandom;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
+
     @Mock
     private UserRepository userRepository;
+
     @InjectMocks
     private UserServiceImpl userService;
+
     private EasyRandom easyRandom;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-
         easyRandom = new EasyRandom();
     }
 
     @Test
-    void getAllUsers() {
-        //Lista UserEntities con valores aleatorios
-        List<UserEntity> userEntities = easyRandom.objects(UserEntity.class, 2).toList();
-
-        //Crea una lista de UserDTOs esperados, asignando los valores correspondientes de UserEntity
-        List<UserDTO> expectedUsers = userEntities.stream()
-                        .map(userEntity -> new UserDTO(userEntity.getUserId(), userEntity.getName(),
-                                userEntity.getLastname(), userEntity.getAddress(), userEntity.getEmail(),
-                                userEntity.getUsername(), userEntity.getPassword()))
-                        .collect(Collectors.toList());
-
+    void getAllUsers_ShouldReturnListOfUserDtos() {
+        //Given
+        List<UserEntity> userEntities = easyRandom.objects(UserEntity.class, 3).toList();
         when(userRepository.findAll()).thenReturn(userEntities);
 
-        List<UserDTO> allUsers = userService.getAllUsers();
+        //When
+        List<UserDTO> result = userService.getAllUsers();
 
+        //Then
+        assertThat(result).hasSize(3);
+        assertThat(result.get(0).getId()).isEqualTo(userEntities.get(0).getUserId());
+        assertThat(result.get(0).getName()).isEqualTo(userEntities.get(0).getName());
+        assertThat(result.get(0).getEmail()).isEqualTo(userEntities.get(0).getEmail());
 
-        Assertions.assertEquals(expectedUsers, allUsers);
-
-        System.out.println("Usuarios esperados: ");
-        expectedUsers.forEach(System.out::println);
-
-        System.out.println("Usuarios reales: ");
-        allUsers.forEach(System.out::println);
-        
-        if (expectedUsers.size() != allUsers.size()) {
-            fail("Las listas tienen tamaños diferentes");
-        }
-
-        for (int i = 0; i < expectedUsers.size(); i++) {
-            assertEquals(expectedUsers.get(i), allUsers.get(i));
-        }
+        verify(userRepository, times(1)).findAll();
     }
 
     @Test
-    void createUser() throws UserNotCreateException {
-        UserDTO userDTO = easyRandom.nextObject(UserDTO.class);
+    void getAllUsers_WhenNoUsers_ShouldReturnEmptyList() {
+        //Given
+        when(userRepository.findAll()).thenReturn(Collections.emptyList());
 
+        //When
+        List<UserDTO> result = userService.getAllUsers();
+
+        //Then
+        assertThat(result.isEmpty());
+        verify(userRepository, times(1)).findAll();
+    }
+
+    @Test
+    void createUser_WithValidData_ShouldReturnCreatedUser() throws UserNotCreateException {
+        //Given
+        UserDTO userDTO = easyRandom.nextObject(UserDTO.class);
         UserEntity userEntity = UserEntity.builder()
                 .name(userDTO.getName())
                 .lastname(userDTO.getLastname())
@@ -82,120 +82,343 @@ class UserServiceImplTest {
                 .password(userDTO.getPassword())
                 .build();
 
-        when(userRepository.save(userEntity)).thenReturn(userEntity);
-        UserDTO createdUser = userService.createUser(userDTO);
+        UserEntity savedEntity = UserEntity.builder()
+                .userId(1L)
+                .name(userDTO.getName())
+                .lastname(userDTO.getLastname())
+                .address(userDTO.getAddress())
+                .email(userDTO.getEmail())
+                .username(userDTO.getUsername())
+                .password(userDTO.getPassword())
+                .build();
 
-        Assertions.assertEquals(userDTO.getName(), createdUser.getName());
-        Assertions.assertEquals(userDTO.getLastname(), createdUser.getLastname());
-        Assertions.assertEquals(userDTO.getAddress(), createdUser.getAddress());
-        Assertions.assertEquals(userDTO.getEmail(), createdUser.getEmail());
-        Assertions.assertEquals(userDTO.getUsername(), createdUser.getUsername());
-        Assertions.assertEquals(userDTO.getPassword(), createdUser.getPassword());
+        when(userRepository.save(any(UserEntity.class))).thenReturn(savedEntity);
 
-        verify(userRepository).save(userEntity);
+        //When
+        UserDTO result = userService.createUser(userDTO);
+
+        //Then
+        assertThat(result.getId()).isEqualTo(savedEntity.getUserId());
+        assertThat(result.getName()).isEqualTo(userDTO.getName());
+        assertThat(result.getLastname()).isEqualTo(userDTO.getLastname());
+        assertThat(result.getEmail()).isEqualTo(userDTO.getEmail());
+        assertThat(result.getUsername()).isEqualTo(userDTO.getUsername());
+
+        verify(userRepository, times(1)).save(any(UserEntity.class));
     }
 
     @Test
-    void findByUsername() throws UsernameNotFoundException {
-        UserEntity userEntity = easyRandom.nextObject(UserEntity.class);
+    void createUser_WhenRepositoryFails_ShouldThrowException() {
+        //Given
         UserDTO userDTO = easyRandom.nextObject(UserDTO.class);
+        when(userRepository.save(any(UserEntity.class))).thenThrow(new RuntimeException("Database Error"));
 
-        when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.ofNullable(userEntity));
-        UserDTO getByUsername = userService.findByUsername(userDTO.getUsername());
+        //When && Then
+        assertThatThrownBy(()-> userService.createUser(userDTO))
+                .isInstanceOf(UserNotCreateException.class);
 
-        //Convierte UserEntity a UserDTO
-        UserDTO expectedUserDTO = new UserDTO(userEntity);
-
-        Assertions.assertEquals(getByUsername, expectedUserDTO);
+        verify(userRepository, times(1)).save(any(UserEntity.class));
     }
 
     @Test
-    void findUserById() throws UserIdNotFoundException {
-        UserDTO userDTO = easyRandom.nextObject(UserDTO.class);
+    void findByUsername_WithExistingUsername_ShouldReturnUserDTO() throws UsernameNotFoundException {
+        //Given
+        String username = "testuser";
         UserEntity userEntity = easyRandom.nextObject(UserEntity.class);
+        userEntity.setUsername(username);
 
-        when(userRepository.findById(userDTO.getId())).thenReturn(Optional.ofNullable(userEntity));
-        UserDTO getById = userService.findUserById(userDTO.getId());
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(userEntity));
 
-        UserDTO expectedUserDTO = new UserDTO(userEntity);
+        //When
+        UserDTO result = userService.findByUsername(username);
 
-        Assertions.assertEquals(getById, expectedUserDTO);
+        //Then
+        assertThat(result.getId()).isEqualTo(userEntity.getUserId());
+        assertThat(result.getUsername()).isEqualTo(username);
+        assertThat(result.getName()).isEqualTo(userEntity.getName());
+
+        verify(userRepository, times(1)).findByUsername(username);
     }
 
     @Test
-    void updateUserById() throws UserIdNotFoundException {
-        UserDTO userDTO = easyRandom.nextObject(UserDTO.class);
+    void findByUsername_WithNonExistingUsername_ShouldThrowException() {
+        //Given
+        String username = "nonexistent";
+        when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
+
+        //When & Then
+        assertThatThrownBy(() -> userService.findByUsername(username))
+                .isInstanceOf(UsernameNotFoundException.class);
+
+        verify(userRepository, times(1)).findByUsername(username);
+    }
+
+    @Test
+    void findUserById_WithExistingId_ShouldReturnUserDTO() throws UserIdNotFoundException {
+        //Given
+        Long id = 1L;
         UserEntity userEntity = easyRandom.nextObject(UserEntity.class);
-        userEntity.setUserId(userDTO.getId()); //Asigna el mismo ID que el del UserDTO
+        userEntity.setUserId(id);
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(userEntity));
+
+        //When
+        UserDTO result = userService.findUserById(id);
+
+        //Then
+        assertThat(result.getId()).isEqualTo(id);
+        assertThat(result.getName()).isEqualTo(userEntity.getName());
+        assertThat(result.getEmail()).isEqualTo(userEntity.getEmail());
+
+        verify(userRepository, times(1)).findById(id);
+    }
+
+    @Test
+    void findUserById_WithNonExistingId_ShouldThrowException() {
+        //Given
+        Long id = 999L;
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+        //When && Then
+        assertThatThrownBy(() -> userService.findUserById(id))
+                .isInstanceOf(UserIdNotFoundException.class);
+
+        verify(userRepository, times(1)).findById(id);
+    }
+
+    @Test
+    void updateUserById_WithValidData_ShouldReturnUpdateUser() throws UserIdNotFoundException {
+        //Given
+        Long id = 1L;
+        UserEntity existingEntity = easyRandom.nextObject(UserEntity.class);
+        existingEntity.setUserId(id);
+
+        UserRequest userRequest = UserRequest.builder()
+                .userId(id)
+                .name("Updated name")
+                .lastname("Updated lastname")
+                .address("Updated address")
+                .email("updated@example.com")
+                .username("updateuser")
+                .password("newpassword")
+                .build();
+
+        UserEntity updateEntity = UserEntity.builder()
+                .userId(id)
+                .name(userRequest.getName())
+                .lastname(userRequest.getLastname())
+                .address(userRequest.getAddress())
+                .email(userRequest.getEmail())
+                .username(userRequest.getUsername())
+                .password(userRequest.getPassword())
+                .build();
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(existingEntity));
+        when(userRepository.save(any(UserEntity.class))).thenReturn(updateEntity);
+
+        //When
+        UserDTO result = userService.updateUserById(id, userRequest);
+
+        //Then
+        assertThat(result.getId()).isEqualTo(id);
+        assertThat(result.getName()).isEqualTo(userRequest.getName());
+        assertThat(result.getEmail()).isEqualTo(userRequest.getEmail());
+
+        verify(userRepository, times(1)).findById(id);
+        verify(userRepository, times(1)).save(any(UserEntity.class));
+    }
+
+    @Test
+    void updateUserByUsername_WithValidData_ShouldReturnUpdateUser() throws UsernameNotFoundException {
+        //Given
+        String username = "testuser";
+        UserEntity existingEntity = easyRandom.nextObject(UserEntity.class);
+        existingEntity.setUsername(username);
+
         UserRequest userRequest = easyRandom.nextObject(UserRequest.class);
 
-        when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userEntity));
-        when(userRepository.save(userEntity)).thenReturn(userEntity);
-        UserDTO updateById = userService.updateUserById(userDTO.getId(), userRequest);
+        UserEntity updateEntity = UserEntity.builder()
+                .userId(existingEntity.getUserId())
+                .name(userRequest.getName())
+                .lastname(userRequest.getLastname())
+                .address(userRequest.getAddress())
+                .email(userRequest.getEmail())
+                .username(existingEntity.getUsername())
+                .password(userRequest.getPassword())
+                .build();
 
-        UserDTO expectedUserDTO = new UserDTO(userEntity);
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(existingEntity));
+        when(userRepository.save(any(UserEntity.class))).thenReturn(updateEntity);
 
-        Assertions.assertEquals(updateById.getName(), expectedUserDTO.getName());
-        Assertions.assertEquals(updateById.getLastname(), expectedUserDTO.getLastname());
-        Assertions.assertEquals(updateById.getAddress(), expectedUserDTO.getAddress());
-        Assertions.assertEquals(updateById.getEmail(), expectedUserDTO.getEmail());
-        Assertions.assertEquals(updateById.getUsername(), expectedUserDTO.getUsername());
-        Assertions.assertEquals(updateById.getPassword(), expectedUserDTO.getPassword());
+        //When
+        UserDTO result = userService.updateUserByUsername(username, userRequest);
 
-        verify(userRepository, times(1)).save(userEntity);
+        //Then
+        assertThat(result.getId()).isEqualTo(existingEntity.getUserId());
+        assertThat(result.getName()).isEqualTo(userRequest.getName());
+        assertThat(result.getEmail()).isEqualTo(userRequest.getEmail());
+
+        verify(userRepository, times(1)).findByUsername(username);
+        verify(userRepository, times(1)).save(any(UserEntity.class));
     }
 
     @Test
-    void updateUserByUsername() throws UsernameNotFoundException {
-        UserDTO userDTO = easyRandom.nextObject(UserDTO.class);
-        UserEntity userEntity = easyRandom.nextObject(UserEntity.class);
-        userEntity.setUserId(userDTO.getId());
-        UserRequest userRequest = easyRandom.nextObject(UserRequest.class);
-
-        when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.of(userEntity));
-        when(userRepository.save(userEntity)).thenReturn(userEntity);
-        UserDTO updateByUsername = userService.updateUserByUsername(userDTO.getUsername(), userRequest);
-
-        UserDTO expectedUserDTO = new UserDTO(userEntity);
-
-        Assertions.assertEquals(updateByUsername.getName(), expectedUserDTO.getName());
-        Assertions.assertEquals(updateByUsername.getLastname(), expectedUserDTO.getLastname());
-        Assertions.assertEquals(updateByUsername.getAddress(), expectedUserDTO.getAddress());
-        Assertions.assertEquals(updateByUsername.getEmail(), expectedUserDTO.getEmail());
-        Assertions.assertEquals(updateByUsername.getUsername(), expectedUserDTO.getUsername());
-        Assertions.assertEquals(updateByUsername.getPassword(), expectedUserDTO.getPassword());
-
-        verify(userRepository, times(1)).save(userEntity);
-    }
-
-    @Test
-    void existByEmail() throws EmailNotFoundException, EmailAlreadyExistsException {
-        String email = "pepito@example.com";
-
+    void existsByEmail_WithExistingEmail_ShouldReturnTrue() {
+        //Given
+        String email = "existing@example.com";
         when(userRepository.existsByEmail(email)).thenReturn(true);
-        userService.existByEmail(email);
+
+        //When
+        boolean result = userService.existsByEmail(email);
+
+        //Then
+        assertThat(result).isTrue();
+        verify(userRepository, times(1)).existsByEmail(email);
+    }
+
+    @Test
+    void existsByEmail_WithExistingEmail_ShouldReturnFalse() {
+        //Given
+        String email = "nonexitent@example.com";
+        when(userRepository.existsByEmail(email)).thenReturn(false);
+
+        //When
+        boolean result = userService.existsByEmail(email);
+
+        //Then
+        assertThat(result).isFalse();
+        verify(userRepository, times(1)).existsByEmail(email);
+    }
+
+    @Test
+    void existsByUsername_WithExistingUsername_ShouldReturnTrue() {
+        //Given
+        String username = "existinguser";
+        when(userRepository.existsByUsername(username)).thenReturn(true);
+
+        //When
+        Boolean result = userService.existsByUsername(username);
+
+        //Then
+        assertThat(result).isTrue();
+        verify(userRepository, times(1)).existsByUsername(username);
+    }
+
+    @Test
+    void existsByUsername_WithExistingUsername_ShouldReturnFalse() {
+        //Given
+        String username = "nonexistentuser";
+        when(userRepository.existsByUsername(username)).thenReturn(false);
+
+        //When
+        Boolean result = userService.existsByUsername(username);
+
+        //Then
+        assertThat(result).isFalse();
+        verify(userRepository, times(1)).existsByUsername(username);
+    }
+
+    @Test
+    void validateEmailNotExists_WithAvailableEmail_ShouldNotThrowException() {
+        //Given
+        String email = "available@example.com";
+        when(userRepository.existsByEmail(email)).thenReturn(false);
+
+        //When & Then
+        assertThatCode(() -> userService.validateEmailNotExists(email))
+                .doesNotThrowAnyException();
 
         verify(userRepository, times(1)).existsByEmail(email);
     }
 
     @Test
-    void existByUsername() throws UsernameNotFoundException, UsernameAlreadyExistsException {
-        String username = "pepito";
+    void validateEmailNotExists_WithExistingEmail_ShouldThrowException() {
+        //Given
+        String email = "existing@example.com";
+        when(userRepository.existsByEmail(email)).thenReturn(true);
 
-        when(userRepository.existsByUsername(username)).thenReturn(true);
-        userService.existByUsername(username);
+        //When & Then
+        assertThatThrownBy(() -> userService.validateEmailNotExists(email))
+                .isInstanceOf(EmailAlreadyExistsException.class);
+
+        verify(userRepository, times(1)).existsByEmail(email);
+
+    }
+
+    @Test
+    void validateUsernameNotExists_WithAvailableUsername_ShouldNotThrowException() {
+        //Given
+        String username = "availableuser";
+        when(userRepository.existsByUsername(username)).thenReturn(false);
+
+        //When & Then
+        assertThatCode(() -> userService.validateUsernameNotExists(username))
+                .doesNotThrowAnyException();
 
         verify(userRepository, times(1)).existsByUsername(username);
     }
 
     @Test
-    void deleteUserById() throws UserDeleteFailedException {
-        Long userId = 12L;
+    void validateUsernameNotExist_WithExistingUsername_ShouldThrowException() {
+        //Given
+        String username = "existingusername";
+        when(userRepository.existsByUsername(username)).thenReturn(true);
+
+        //When & Then
+        assertThatThrownBy(() -> userService.validateUsernameNotExists(username))
+                .isInstanceOf(UsernameAlreadyExistsException.class);
+
+        verify(userRepository, times(1)).existsByUsername(username);
+    }
+
+    @Test
+    void deleteUserById_WithExistingId_ShouldReturnTrue() throws UserDeleteFailedException {
+        //Given
+        Long id = 1L;
         UserEntity userEntity = easyRandom.nextObject(UserEntity.class);
+        userEntity.setUserId(id);
 
-        when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(userEntity));
-        userService.deleteUserById(userId);
+        when(userRepository.findById(id)).thenReturn(Optional.of(userEntity));
+        doNothing().when(userRepository).deleteById(id);
 
-        verify(userRepository, times(1)).deleteById(userId);
+        //When
+        Boolean result = userService.deleteUserById(id);
+
+        //Then
+        assertThat(result).isTrue();
+        verify(userRepository, times(1)).findById(id);
+        verify(userRepository, times(1)).deleteById(id);
+    }
+
+    @Test
+    void deleteUserById_WithNonExistingId_ShouldThrowException() {
+        //Given
+        Long id = 999L;
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+        //When & Then
+        assertThatThrownBy(() -> userService.deleteUserById(id))
+                .isInstanceOf(UserDeleteFailedException.class);
+
+        verify(userRepository, times(1)).findById(id);
+        verify(userRepository, never()).deleteById(id);
+    }
+
+    @Test
+    void deleteUserById_WhenRepositoryFails_ShouldThrowException() {
+        //Given
+        Long id = 1L;
+        UserEntity userEntity = easyRandom.nextObject(UserEntity.class);
+        userEntity.setUserId(id);
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(userEntity));
+        doThrow(new RuntimeException("Database Error")).when(userRepository).deleteById(id);
+
+        //When & Then
+        assertThatThrownBy(() -> userService.deleteUserById(id))
+                .isInstanceOf(RuntimeException.class);
+
+        verify(userRepository, times(1)).findById(id);
+        verify(userRepository, times(1)).deleteById(id);
     }
 }

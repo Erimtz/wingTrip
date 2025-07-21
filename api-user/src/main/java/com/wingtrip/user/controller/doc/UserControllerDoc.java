@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 @Tag(name = "Users", description = "User management API - WingTrip User Service")
 public interface UserControllerDoc {
@@ -198,7 +197,7 @@ public interface UserControllerDoc {
                     content = @Content
             )
     })
-    ResponseEntity<ExistenceResponse> existByEmail(@PathVariable String email);
+    ResponseEntity<ExistenceResponse> existsByEmail(@PathVariable String email);
 
 
     @Operation(summary = "Exist by username",
@@ -218,7 +217,7 @@ public interface UserControllerDoc {
                     content = @Content
             )
     })
-    ResponseEntity<ExistenceResponse> existByUsername(@PathVariable String username);
+    ResponseEntity<ExistenceResponse> existsByUsername(@PathVariable String username);
 
 
     @Operation(summary = "Delete user by ID",
