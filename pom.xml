@@ -34,5 +34,6 @@
 		<module>api-gateway</module>
 		<module>eureka-server</module>
 		<module>config-server</module>
+        <module>api-booking</module>
     </modules>
 </project>
