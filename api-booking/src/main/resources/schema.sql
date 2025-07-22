@@ -18,9 +18,9 @@ CREATE TABLE `booking` (
         `total_amount` DECIMAL(10,2) NOT NULL,
         `currency` VARCHAR(3) DEFAULT 'USD',
         `booking_status` VARCHAR(20) NOT NULL,
-        `special_request` TEXT,
+        `special_requests` TEXT,
         `booking_notes` TEXT,
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        `update_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         `expires_at` TIMESTAMP --para reservas temporales
 );
