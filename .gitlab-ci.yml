@@ -18,7 +18,7 @@ cache:
   paths:
     - .m2/repository/
     - target/
-    - */target/
+    - "*/target/"
 
 # Clonar código desde GitHub (no desde GitLab)
 clone-source:
