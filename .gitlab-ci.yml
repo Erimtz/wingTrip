@@ -1,5 +1,9 @@
-# GitLab CI/CD Pipeline para WingTrip Microservicios
-# Este pipeline se ejecuta cuando GitHub envía webhook
+# GitLab CI/CD Pipeline para WingTrip
+variables:
+  GIT_STRATEGY: none
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+  GITHUB_REPO: "https://github.com/Erimtz/wingtrip.git"
 
 stages:
   - clone-from-github
@@ -8,71 +12,67 @@ stages:
   - quality-check
   - package
 
-variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
-  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
-  GITHUB_REPO: "https://github.com/Erimtz/wingtrip.git"
-
-# Cache para acelerar builds
 cache:
   paths:
     - .m2/repository/
     - target/
     - "*/target/"
 
-# Clonar código desde GitHub (no desde GitLab)
+# Paso 1: Obtener código desde GitHub (no desde GitLab)
 clone-source:
   stage: clone-from-github
   image: alpine/git:latest
   script:
-    - echo "🔄 Clonando código desde GitHub..."
+    # Limpiar cualquier rastro de git existente
+    - rm -rf .git || true
     - rm -rf wingtrip-source || true
-    - git clone $GITHUB_REPO wingtrip-source
+
+    # Clonar SOLO desde GitHub
+    - echo "Descargando código desde GitHub..."
+    - git clone --depth=1 $GITHUB_REPO wingtrip-source
+
+    # Copiar archivos al directorio de trabajo
     - cp -r wingtrip-source/* .
+    - rm -rf wingtrip-source
+
+    # Verificar que tenemos el código
+    - echo "Archivos descargados:"
     - ls -la
   artifacts:
     paths:
       - ./*
     expire_in: 1 hour
 
-# Build de todos los microservicios
+# Paso 2: Compilar
 build-services:
   stage: build
   image: maven:3.8.4-openjdk-17
   dependencies:
     - clone-source
   script:
-    - echo "🔨 Compilando microservicios..."
-    - echo "📦 Config Server"
+    - echo "Compilando microservicios..."
     - mvn $MAVEN_CLI_OPTS -f config-server/pom.xml clean compile
-    - echo "🌐 Eureka Server"
     - mvn $MAVEN_CLI_OPTS -f eureka-server/pom.xml clean compile
-    - echo "🚪 API Gateway"
     - mvn $MAVEN_CLI_OPTS -f api-gateway/pom.xml clean compile
-    - echo "👤 API User"
     - mvn $MAVEN_CLI_OPTS -f api-user/pom.xml clean compile
-    - echo "📅 API Booking"
     - mvn $MAVEN_CLI_OPTS -f api-booking/pom.xml clean compile
   artifacts:
     paths:
       - "*/target/"
     expire_in: 1 hour
 
-# Tests con Jacoco Coverage
+# Paso 3: Tests
 test-with-coverage:
   stage: test
   image: maven:3.8.4-openjdk-17
   dependencies:
     - build-services
   script:
-    - echo "🧪 Ejecutando tests con coverage..."
-    - echo "Testing API User (con Jacoco)..."
+    - echo "Ejecutando tests..."
     - mvn $MAVEN_CLI_OPTS -f api-user/pom.xml test jacoco:report
-    - echo "Testing API Booking..."
     - mvn $MAVEN_CLI_OPTS -f api-booking/pom.xml test
-    - echo "Testing otros servicios..."
-    - mvn $MAVEN_CLI_OPTS -f config-server/pom.xml test || echo "Config server tests optional"
-    - mvn $MAVEN_CLI_OPTS -f api-gateway/pom.xml test || echo "Gateway tests optional"
+    - mvn $MAVEN_CLI_OPTS -f config-server/pom.xml test || echo "Tests opcionales"
+    - mvn $MAVEN_CLI_OPTS -f api-gateway/pom.xml test || echo "Tests opcionales"
   coverage: '/Total.*?([0-9]{1,3})%/'
   artifacts:
     reports:
@@ -86,34 +86,31 @@ test-with-coverage:
       - "*/target/surefire-reports/"
     expire_in: 1 week
 
-# Análisis de calidad de código
+# Paso 4: Análisis de calidad
 quality-check:
   stage: quality-check
   image: maven:3.8.4-openjdk-17
   dependencies:
     - test-with-coverage
   script:
-    - echo "📊 Generando reportes de calidad..."
-    - echo "Coverage report para API User:"
-    - ls -la api-user/target/site/jacoco/ || echo "No coverage reports found"
-    - echo "📈 Resumen de coverage:"
-    - cat api-user/target/site/jacoco/index.html | grep -o '[0-9]*%' | head -5 || echo "No coverage data"
+    - echo "Analizando calidad de código..."
+    - ls -la api-user/target/site/jacoco/ || echo "No hay reportes de coverage"
   artifacts:
     paths:
       - "*/target/site/"
     expire_in: 1 week
 
-# Package (opcional - para crear JARs)
+# Paso 5: Empaquetar JARs
 package-services:
   stage: package
   image: maven:3.8.4-openjdk-17
   dependencies:
     - test-with-coverage
   script:
-    - echo "📦 Empaquetando servicios..."
+    - echo "Creando JARs..."
     - mvn $MAVEN_CLI_OPTS -f api-user/pom.xml package -DskipTests
     - mvn $MAVEN_CLI_OPTS -f api-booking/pom.xml package -DskipTests
-    - echo "✅ JARs creados:"
+    - echo "JARs creados:"
     - find . -name "*.jar" -type f | grep -v ".m2"
   artifacts:
     paths:
