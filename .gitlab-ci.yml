@@ -1,12 +1,9 @@
 # GitLab CI/CD Pipeline para WingTrip
 variables:
-  GIT_STRATEGY: none
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
-  GITHUB_REPO: "https://github.com/Erimtz/wingtrip.git"
 
 stages:
-  - clone-from-github
   - build
   - test
   - quality-check
@@ -18,37 +15,10 @@ cache:
     - target/
     - "*/target/"
 
-# Paso 1: Obtener código desde GitHub (no desde GitLab)
-clone-source:
-  stage: clone-from-github
-  image: alpine/git:latest
-  script:
-    # Limpiar cualquier rastro de git existente
-    - rm -rf .git || true
-    - rm -rf wingtrip-source || true
-
-    # Clonar SOLO desde GitHub
-    - echo "Descargando código desde GitHub..."
-    - git clone --depth=1 $GITHUB_REPO wingtrip-source
-
-    # Copiar archivos al directorio de trabajo
-    - cp -r wingtrip-source/* .
-    - rm -rf wingtrip-source
-
-    # Verificar que tenemos el código
-    - echo "Archivos descargados:"
-    - ls -la
-  artifacts:
-    paths:
-      - ./*
-    expire_in: 1 hour
-
-# Paso 2: Compilar
+# Paso 1: Compilar
 build-services:
   stage: build
   image: maven:3.8.4-openjdk-17
-  dependencies:
-    - clone-source
   script:
     - echo "Compilando microservicios..."
     - mvn $MAVEN_CLI_OPTS -f config-server/pom.xml clean compile
@@ -61,12 +31,10 @@ build-services:
       - "*/target/"
     expire_in: 1 hour
 
-# Paso 3: Tests
+# Paso 2: Tests con cobertura
 test-with-coverage:
   stage: test
   image: maven:3.8.4-openjdk-17
-  dependencies:
-    - build-services
   script:
     - echo "Ejecutando tests..."
     - mvn $MAVEN_CLI_OPTS -f api-user/pom.xml test jacoco:report
@@ -86,12 +54,10 @@ test-with-coverage:
       - "*/target/surefire-reports/"
     expire_in: 1 week
 
-# Paso 4: Análisis de calidad
+# Paso 3: Análisis de calidad
 quality-check:
   stage: quality-check
   image: maven:3.8.4-openjdk-17
-  dependencies:
-    - test-with-coverage
   script:
     - echo "Analizando calidad de código..."
     - ls -la api-user/target/site/jacoco/ || echo "No hay reportes de coverage"
@@ -100,12 +66,10 @@ quality-check:
       - "*/target/site/"
     expire_in: 1 week
 
-# Paso 5: Empaquetar JARs
+# Paso 4: Empaquetar JARs
 package-services:
   stage: package
   image: maven:3.8.4-openjdk-17
-  dependencies:
-    - test-with-coverage
   script:
     - echo "Creando JARs..."
     - mvn $MAVEN_CLI_OPTS -f api-user/pom.xml package -DskipTests
