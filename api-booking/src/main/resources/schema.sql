@@ -5,9 +5,6 @@ DROP TABLE IF EXISTS `booking`;
 CREATE TABLE `booking` (
         `booking_id` BIGINT NOT NULL AUTO_INCREMENT,
         `booking_reference` VARCHAR(10) UNIQUE NOT NULL, --wt001234
-        `user_id` BIGINT NOT NULL,
-        `flight_id` BIGINT NOT NULL,
-        `payment_id` BIGINT NOT NULL,
         `booking_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         `travel_date` DATE NOT NULL,
         `return_date` DATE, --Null si es solo un día
@@ -22,5 +19,9 @@ CREATE TABLE `booking` (
         `booking_notes` TEXT,
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        `expires_at` TIMESTAMP --para reservas temporales
+        `expires_at` TIMESTAMP, --para reservas temporales
+        `user_id` BIGINT NOT NULL,
+        `flight_id` BIGINT NOT NULL,
+        `payment_id` BIGINT NOT NULL,
+        PRIMARY KEY (`booking_id`)
 );
