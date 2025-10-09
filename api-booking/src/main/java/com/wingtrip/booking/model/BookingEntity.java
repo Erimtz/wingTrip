@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
+
 
 @Data
 @Builder
@@ -44,7 +44,7 @@ public class BookingEntity {
     @Column(name = "infant_passengers")
     private int infantPassengers;
 
-    @Column(name = "total_passengers")
+    @Column(name = "total_passengers", insertable = false, updatable = false)
     private int totalPassengers;
 
     @Column(name = "total_amount")
