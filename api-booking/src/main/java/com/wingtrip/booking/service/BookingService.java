@@ -3,17 +3,18 @@ package com.wingtrip.booking.service;
 import com.wingtrip.booking.controller.request.CreateBookingRequest;
 import com.wingtrip.booking.controller.request.UpdateBookingRequest;
 import com.wingtrip.booking.dto.BookingDTO;
+import com.wingtrip.booking.exception.*;
 
 import java.util.List;
 
 public interface BookingService {
 
-    BookingDTO createBooking(CreateBookingRequest request);
-    BookingDTO updateBooking(Long bookingId, UpdateBookingRequest request);
-    BookingDTO findById(Long bookingId);
-    BookingDTO findByReference(String bookingReference);
-    List<BookingDTO> findBookingsByUserId(Long userId);
-    void cancelBooking(Long bookingId);
+    BookingDTO createBooking(BookingDTO bookingDTO) throws BookingNotCreateException;
+    BookingDTO updateBooking(Long bookingId, UpdateBookingRequest request) throws BookingNotUpdateException;
+    BookingDTO findById(Long bookingId) throws BookingNotFoundByIdException;
+    BookingDTO findByReference(String bookingReference) throws BookingNotFoundByReferenceException;
+    List<BookingDTO> findBookingsByUserId(Long userId) throws UserBookingsNotFoundException;
+    void cancelBooking(Long bookingId) throws BookingCannotBeCancelledException;
     boolean isBookingExpired(Long bookingId);
 
 }
