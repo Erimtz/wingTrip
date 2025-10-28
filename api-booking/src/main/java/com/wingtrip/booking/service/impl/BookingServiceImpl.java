@@ -25,6 +25,10 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDTO createBooking(BookingDTO bookingDTO) throws BookingNotCreateException {
+        if (bookingDTO.getReturnDate() != null && bookingDTO.getReturnDate().isBefore(bookingDTO.getTravelDate())) {
+            throw new BookingNotCreateException(MessageCode.INVALID_RETURN_DATE);
+        }
+
         try {
             BookingEntity bookingEntity = BookingEntity.builder()
                     .bookingReference(generateBookingReference())
@@ -46,7 +50,6 @@ public class BookingServiceImpl implements BookingService {
             BookingEntity saveBooking = bookingRepository.save(bookingEntity);
             return new BookingDTO(saveBooking);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new BookingNotCreateException(MessageCode.BOOKING_NOT_CREATE);
         }
     }
@@ -120,21 +123,15 @@ public class BookingServiceImpl implements BookingService {
         return new BookingDTO(bookingEntity);
     }
 
+
     @Override
-    public List<BookingDTO> findBookingsByUserId(Long userId) throws UserBookingsNotFoundException {
-        if (userId == null) {
-            throw new UserBookingsNotFoundException(MessageCode.USER_BOOKINGS_NOT_FOUND);
-        }
+    public void confirmBooking(Long bookingId, Long paymentId) throws BookingNotUpdateException {
+        BookingEntity entity = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotUpdateException(MessageCode.BOOKING_NOT_FOUND_BY_ID));
 
-        List<BookingEntity> bookings = bookingRepository.findByUserId(userId);
-
-        if (bookings == null) {
-            throw new UserBookingsNotFoundException(MessageCode.USER_BOOKINGS_NOT_FOUND);
-        }
-
-        return bookings.stream()
-                .map(BookingDTO::new)
-                .collect(Collectors.toList());
+        entity.setBookingStatus(BookingStatus.CONFIRMED);
+        entity.setPaymentId(paymentId);
+        bookingRepository.save(entity);
     }
 
     @Override
@@ -180,6 +177,101 @@ public class BookingServiceImpl implements BookingService {
         //Verificar si la fecha actual es despues de expiresAt
         return LocalDateTime.now().isAfter(entity.getExpiresAt());
     }
+
+    @Override
+    public List<BookingDTO> findBookingsByUserId(Long userId) throws UserBookingsNotFoundException {
+        if (userId == null) {
+            throw new UserBookingsNotFoundException(MessageCode.USER_BOOKINGS_NOT_FOUND);
+        }
+
+        List<BookingEntity> bookings = bookingRepository.findByUserId(userId);
+
+        if (bookings.isEmpty()) {
+            throw new UserBookingsNotFoundException(MessageCode.USER_BOOKINGS_NOT_FOUND);
+        }
+
+        return bookings.stream()
+                .map(BookingDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookingDTO> findBookingsByUserIdAndStatus(Long userId, BookingStatus status) throws UserBookingsNotFoundException {
+        if (userId == null) {
+            throw new UserBookingsNotFoundException(MessageCode.USER_BOOKINGS_NOT_FOUND);
+        }
+
+        List<BookingEntity> bookings = bookingRepository.findByUserIdAndBookingStatus(userId, status);
+
+        if (bookings.isEmpty()) {
+            throw new UserBookingsNotFoundException(MessageCode.USER_BOOKINGS_NOT_FOUND);
+        }
+
+        return bookings.stream()
+                .map(BookingDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookingDTO> findCancelledBookingsByUserId(Long userId) throws UserBookingsNotFoundException {
+        return findBookingsByUserIdAndStatus(userId, BookingStatus.CANCELLED);
+    }
+
+    @Override
+    public List<BookingDTO> findPendingBookingsByUserId(Long userId) throws UserBookingsNotFoundException {
+        return findBookingsByUserIdAndStatus(userId, BookingStatus.PENDING);
+    }
+
+    // Filtro manual para expiradas (por usuario):
+    @Override
+    public List<BookingDTO> findExpiredBookingsByUserId(Long userId) throws UserBookingsNotFoundException {
+        if (userId == null) {
+            throw new UserBookingsNotFoundException(MessageCode.USER_BOOKINGS_NOT_FOUND);
+        }
+
+        List<BookingEntity> bookings = bookingRepository.findByUserId(userId);
+
+        if (bookings.isEmpty()) {
+            throw new UserBookingsNotFoundException(MessageCode.USER_BOOKINGS_NOT_FOUND);
+        }
+
+        //Filtrar solo por reservas expiradas
+        return bookings.stream()
+                .filter(bookingEntity -> bookingEntity.getExpiresAt() != null
+                    && LocalDateTime.now().isAfter(bookingEntity.getExpiresAt()))
+                .map(BookingDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    // Admin - todas las expiradas:
+    @Override
+    public List<BookingDTO> findAllExpiredBookings() {
+        return bookingRepository.findByExpiresAtBefore(LocalDateTime.now()).stream()
+                .map(BookingDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void markAsExpired(Long bookingId) throws BookingExpiredException {
+        BookingEntity entity = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingExpiredException(MessageCode.BOOKING_NOT_FOUND_BY_ID));
+
+        if (entity.getExpiresAt() != null && LocalDateTime.now().isAfter(entity.getExpiresAt())) {
+            entity.setBookingStatus(BookingStatus.EXPIRED);
+            bookingRepository.save(entity);
+        }
+    }
+
+    @Override
+    public void markAsPaid(Long bookingId, Long paymentId) throws BookingNotUpdateException {
+        BookingEntity entity = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotUpdateException(MessageCode.BOOKING_NOT_FOUND_BY_ID));
+
+        entity.setBookingStatus(BookingStatus.PAID);
+        entity.setPaymentId(paymentId);
+        bookingRepository.save(entity);
+    }
+
 
     private String generateBookingReference() {
         return "BK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
