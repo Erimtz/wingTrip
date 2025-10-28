@@ -17,6 +17,7 @@ public enum MessageCode {
     BOOKING_EXPIRED("Booking has expired"),
     BOOKING_CANNOT_BE_CANCELLED("Booking cannot be cancelled at this time"),
     INVALID_BOOKING_DATES("Travel date must be in the future"),
+    INVALID_RETURN_DATE("Return date cannot be before travel date"),
     INVALID_PASSENGER_COUNT("At least one passenger is required"),
     FLIGHT_NOT_AVAILABLE("Flight is not available for booking");
 
