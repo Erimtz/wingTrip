@@ -1,4 +1,4 @@
-INSERT INTO booking (booking_reference, user_id, flight_id, payment_id, travel_date, return_date, adult_passengers, child_passengers, infant_passengers, total_amount, currency, booking_status, special_request, booking_notes, expires_at)
+INSERT INTO booking (booking_reference, user_id, flight_id, payment_id, travel_date, return_date, adult_passengers, child_passengers, infant_passengers, total_amount, currency, booking_status, special_requests, booking_notes, expires_at)
 VALUES
 ('WT001234', 1, 101, 1001, '2025-08-15', '2025-08-22', 2, 0, 0, 450.00, 'USD', 'CONFIRMED', 'Window seats preferred', 'Corporate booking', NULL),
 ('WT001235', 2, 102, NULL, '2025-08-20', NULL, 1, 1, 0, 320.50, 'USD', 'PENDING', 'Vegetarian meal', 'Family trip', '2025-07-25 10:00:00'),
