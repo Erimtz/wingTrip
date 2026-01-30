@@ -26,10 +26,10 @@ public interface BookingRepository extends JpaRepository<BookingEntity, Long> {
     // (Opcional) Filtro flexible para futuras mejoras
     @Query("""
     SELECT b FROM BookingEntity b
-    WHERE (:userId IS NULL OR b.userId = :userId)
-    AND (:status IS NULL OR b.bookingStatus = :status)
-    AND (:from IS NULL OR b.travelDate >= :from)
-    AND (:to IS NULL OR b.travelDate <= :to)
+    WHERE (userId IS NULL OR b.userId = userId)
+    AND (status IS NULL OR b.bookingStatus = status)
+    AND (from IS NULL OR b.travelDate >= from)
+    AND (to IS NULL OR b.travelDate <= to)
 """)
     List<BookingEntity> findAllWithFilters(
             @Param("userId") Long userId,
