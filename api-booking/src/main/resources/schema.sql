@@ -1,7 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `booking_db`;
-USE `booking_db`;
-
 DROP TABLE IF EXISTS `booking`;
+
 CREATE TABLE `booking` (
         `booking_id` BIGINT NOT NULL AUTO_INCREMENT,
         `booking_reference` VARCHAR(10) UNIQUE NOT NULL,
@@ -19,9 +17,9 @@ CREATE TABLE `booking` (
         `booking_notes` TEXT,
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        `expires_at` TIMESTAMP,
-        `user_id` BIGINT NOT NULL,
-        `flight_id` BIGINT NOT NULL,
-        `payment_id` BIGINT NOT NULL,
-        PRIMARY KEY (`booking_id`)
+	`expires_at` TIMESTAMP,
+	`user_id` BIGINT NOT NULL,
+	`flight_id` BIGINT NOT NULL,
+	`payment_id` BIGINT,
+	PRIMARY KEY (`booking_id`)
 );
