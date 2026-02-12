@@ -22,19 +22,3 @@ spring:
       deserialization:
         FAIL_ON_UNKNOWN_PROPERTIES: false
 
-  springdoc:
-    api-docs:
-      path: /v3/api-docs
-      enabled: true
-    swagger-ui:
-      path: /swagger-ui.html
-      enabled: true
-    show-actuator: true
-    packages-to-scan: com.wingtrip.booking.controller
-    default-consumes-media-type: application/json
-    default-produces-media-type: application/json
-
-  eureka:
-    client:
-      serviceUrl:
-        defaultZone: http://eureka-server:8761/eureka/
