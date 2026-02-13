@@ -1,5 +1,6 @@
 package com.wingtrip.booking.controller.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.wingtrip.booking.model.BookingStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookingResponse {
 
     private Long bookingId;
