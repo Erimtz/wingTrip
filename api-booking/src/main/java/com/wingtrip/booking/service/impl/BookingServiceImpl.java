@@ -276,6 +276,6 @@ public class BookingServiceImpl implements BookingService {
 
 
     private String generateBookingReference() {
-        return "BK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        return "WT" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
     }
 }
