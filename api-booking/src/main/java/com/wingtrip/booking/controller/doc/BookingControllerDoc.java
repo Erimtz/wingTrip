@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -32,6 +33,11 @@ public interface BookingControllerDoc {
                             mediaType = "application/json",
                             schema = @Schema(implementation = BookingResponse.class)
                     )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid request data",
+                    content = @Content
             ),
             @ApiResponse(
                     responseCode = "500",
@@ -120,7 +126,7 @@ public interface BookingControllerDoc {
                     content = @Content
             )
     })
-    ResponseEntity<BookingResponse> confirmBooking(@PathVariable Long bookingId, Long paymentId) throws BookingNotUpdateException, BookingNotFoundByIdException;
+    ResponseEntity<BookingResponse> confirmBooking(@PathVariable Long bookingId, @RequestParam Long paymentId) throws BookingNotUpdateException, BookingNotFoundByIdException;
 
     @Operation(summary = "Cancel booking by ID",
             description = "Cancel a booking using their unique ID.")
@@ -197,7 +203,7 @@ public interface BookingControllerDoc {
                     content = @Content
             )
     })
-    ResponseEntity<List<BookingResponse>> findBookingsByUserIdAndStatus(@PathVariable Long userId, BookingStatus status) throws UserBookingsNotFoundException;
+    ResponseEntity<List<BookingResponse>> findBookingsByUserIdAndStatus(@PathVariable Long userId, @RequestParam BookingStatus status) throws UserBookingsNotFoundException;
 
     @Operation(summary = "Cancel booking by ID",
             description = "Cancel a booking using their unique ID.")
@@ -313,7 +319,7 @@ public interface BookingControllerDoc {
                     content = @Content
             )
     })
-    ResponseEntity<BookingResponse> markAsPaid(@PathVariable Long bookingId, Long paymentId) throws BookingNotUpdateException, BookingNotFoundByIdException;
+    ResponseEntity<BookingResponse> markAsPaid(@PathVariable Long bookingId, @RequestParam Long paymentId) throws BookingNotUpdateException, BookingNotFoundByIdException;
 }
 
 
