@@ -43,34 +43,23 @@ public class GlobalExceptionHandler {
         result.put(STATUS, HttpStatus.BAD_REQUEST.value());
         result.put(ERROR, ex.getMessage());
         result.put(PATH, new UrlPathHelper().getPathWithinApplication(req));
-        log.error("Custom exception ocurred: {}" + ERROR, ex.getMessage());
+
+        log.error("Custom business exception ocurred: {} at path: {}", ex.getMessage(), result.get(PATH));
+
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(HttpServletRequest req, Exception ex) {
 
-        if (ex instanceof BookingNotFoundException ||
-                ex instanceof BookingNotFoundByIdException ||
-                ex instanceof BookingNotFoundByReferenceException ||
-                ex instanceof UserBookingsNotFoundException ||
-                ex instanceof BookingNotCreateException ||
-                ex instanceof BookingNotUpdateException ||
-                ex instanceof BookingAlreadyCancelledException ||
-                ex instanceof BookingExpiredException ||
-                ex instanceof BookingCannotBeCancelledException ||
-                ex instanceof InvalidBookingDatesException ||
-                ex instanceof InvalidPassengerCountException ||
-                ex instanceof FlightNotAvailableException) {
-            return null;
-        }
-
         Map<String, Object> result = new HashMap<>();
-        result.put(TIMESTAMP, DateTimeUtil.now().toEpochDay());
+        result.put(TIMESTAMP, System.currentTimeMillis());
         result.put(STATUS, HttpStatus.INTERNAL_SERVER_ERROR.value());
         result.put(ERROR, ex.getMessage());
         result.put(PATH, new UrlPathHelper().getPathWithinApplication(req));
-        log.error("Generic exception occurred: {}" + ERROR, ex.getMessage());
+
+        log.error("Unexpected error occurred: {} at path: {}", ex.getMessage(), result.get(PATH), ex);
+
         return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
