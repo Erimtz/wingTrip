@@ -1,0 +1,394 @@
+{
+  "info": {
+    "_postman_id": "64b2d2f8-734e-43b7-ac7a-5f61011c530f",
+    "name": "WingTrip-API-Booking",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "18573665"
+  },
+  "item": [
+    {
+      "name": "Create booking",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"userId\": 1,\r\n  \"flightId\": 101,\r\n  \"travelDate\": \"2025-08-15\",\r\n  \"returnDate\": \"2025-08-22\",\r\n  \"adultPassengers\": 2,\r\n  \"childPassengers\": 0,\r\n  \"infantPassengers\": 0,\r\n  \"totalAmount\": 450.00,\r\n  \"currency\": \"USD\",\r\n  \"specialRequests\": \"Window seats preferred\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/create",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "create"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Find booking by id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/find/6",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "find",
+            "6"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update booking by id",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"userId\": 1,\r\n  \"flightId\": 101,\r\n  \"travelDate\": \"2025-08-15\",\r\n  \"returnDate\": \"2025-08-22\",\r\n  \"adultPassengers\": 3,\r\n  \"childPassengers\": 1,\r\n  \"infantPassengers\": 0,\r\n  \"totalAmount\": 450.00,\r\n  \"currency\": \"USD\",\r\n  \"specialRequests\": \"Extra legroom and vegetarian meal\",\r\n  \"bookingNotes\": \"Updated request\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/update/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "update",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Find by reference",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/find-by-reference/WT4AC402",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "find-by-reference",
+            "WT4AC402"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Confirm Booking",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/confirm/6?paymentId=1001",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "confirm",
+            "6"
+          ],
+          "query": [
+            {
+              "key": "paymentId",
+              "value": "1001"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cancel Booking",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/cancel/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "cancel",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Expired booking",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/is-expired/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "is-expired",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Finds bookings by user ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/user/4",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "user",
+            "4"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Finds bookings by user ID and status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/user/1/status?status=CONFIRMED",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "user",
+            "1",
+            "status"
+          ],
+          "query": [
+            {
+              "key": "status",
+              "value": "CONFIRMED",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Finds cancelled bookings by user ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/user/4/cancelled",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "user",
+            "4",
+            "cancelled"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Finds pending bookings by user ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/user/2/pending",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "user",
+            "2",
+            "pending"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Finds expired bookings by user ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/user/2/expired",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "user",
+            "2",
+            "expired"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Finds all expired bookings",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/expired",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "expired"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Mark as expired",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/mark-expired/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "mark-expired",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Mark as paid",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/v1/booking/mark-paid/6?paymentId=1001",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "api",
+            "v1",
+            "booking",
+            "mark-paid",
+            "6"
+          ],
+          "query": [
+            {
+              "key": "paymentId",
+              "value": "1001"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

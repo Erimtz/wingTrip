@@ -7,6 +7,7 @@ import com.wingtrip.booking.model.BookingEntity;
 import com.wingtrip.booking.model.BookingStatus;
 import com.wingtrip.booking.repository.BookingRepository;
 import com.wingtrip.booking.service.BookingService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
@@ -274,6 +276,6 @@ public class BookingServiceImpl implements BookingService {
 
 
     private String generateBookingReference() {
-        return "BK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        return "WT" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
     }
 }

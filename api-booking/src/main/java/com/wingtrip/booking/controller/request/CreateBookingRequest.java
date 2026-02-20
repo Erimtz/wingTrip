@@ -31,6 +31,8 @@ public class CreateBookingRequest {
 
     private int infantPassengers;
 
+    private Double totalAmount;
+
     private String currency; // Opcional, default "USD"
 
     private String specialRequests; // Opcional

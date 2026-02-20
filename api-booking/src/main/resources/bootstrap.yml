@@ -34,7 +34,3 @@ spring:
     default-consumes-media-type: application/json
     default-produces-media-type: application/json
 
-  eureka:
-    client:
-      serviceUrl:
-        defaultZone: http://eureka-server:8761/eureka/

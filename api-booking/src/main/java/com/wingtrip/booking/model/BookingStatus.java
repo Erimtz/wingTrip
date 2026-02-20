@@ -2,7 +2,6 @@ package com.wingtrip.booking.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
