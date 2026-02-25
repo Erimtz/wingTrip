@@ -1,6 +1,6 @@
-package com.wingtrip;
+package com.wingtrip.payment;
 
-public class Main {
+public class ApiPaymentApplication {
     public static void main(String[] args) {
         System.out.println("Hello, World!");
     }

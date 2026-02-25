@@ -1,4 +1,4 @@
-package com.wingtrip.exception;
+package com.wingtrip.payment.exception;
 
 public class PaymentNotFoundException extends Exception {
 

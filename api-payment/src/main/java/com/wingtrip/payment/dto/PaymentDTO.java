@@ -1,8 +1,7 @@
-package com.wingtrip.dto;
+package com.wingtrip.payment.dto;
 
-import com.wingtrip.model.PaymentEntity;
-import com.wingtrip.model.PaymentStatus;
-import jakarta.persistence.*;
+import com.wingtrip.payment.model.PaymentEntity;
+import com.wingtrip.payment.model.PaymentStatus;
 import lombok.*;
 
 import java.math.BigDecimal;

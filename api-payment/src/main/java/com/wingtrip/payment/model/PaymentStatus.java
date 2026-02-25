@@ -1,4 +1,4 @@
-package com.wingtrip.model;
+package com.wingtrip.payment.model;
 
 public enum PaymentStatus {
     PENDING,

@@ -1,4 +1,4 @@
-package com.wingtrip.exception;
+package com.wingtrip.payment.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

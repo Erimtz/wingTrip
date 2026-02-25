@@ -1,7 +1,7 @@
-package com.wingtrip.repository;
+package com.wingtrip.payment.repository;
 
-import com.wingtrip.model.PaymentEntity;
-import com.wingtrip.model.PaymentStatus;
+import com.wingtrip.payment.model.PaymentEntity;
+import com.wingtrip.payment.model.PaymentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

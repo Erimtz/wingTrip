@@ -1,4 +1,4 @@
-package com.wingtrip.model;
+package com.wingtrip.payment.model;
 
 import jakarta.persistence.*;
 import lombok.*;
