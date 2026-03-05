@@ -51,12 +51,14 @@ public class PaymentController implements PaymentControllerDoc {
 
     @Override
     @GetMapping("/find-by-booking/{bookingId}")
-    public ResponseEntity<PaymentResponse> findByBookingId(@PathVariable Long bookingId) throws PaymentNotFoundException {
+    public ResponseEntity<List<PaymentResponse>> findByBookingId(@PathVariable Long bookingId) throws PaymentNotFoundException {
         log.info("Finding payment for booking ID: {}", bookingId);
-        PaymentDTO paymentDTO = paymentService.findByBookingId(bookingId);
-        PaymentResponse response = paymentMapper.toResponse(paymentDTO);
-        log.info("Payment found successfully for booking ID: {}", bookingId);
-        return ResponseEntity.ok(response);
+        List<PaymentDTO> payments = paymentService.findByBookingId(bookingId);
+        List<PaymentResponse> responses = payments.stream()
+                .map(paymentMapper::toResponse)
+                .collect(Collectors.toList());
+        log.info("Found {} payments for booking ID: {}", responses.size(), bookingId);
+        return ResponseEntity.ok(responses);
     }
 
     @Override

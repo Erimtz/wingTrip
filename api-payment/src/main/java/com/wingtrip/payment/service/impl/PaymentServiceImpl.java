@@ -62,16 +62,18 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentDTO findByBookingId(Long bookingId) throws PaymentNotFoundException {
+    public List<PaymentDTO> findByBookingId(Long bookingId) throws PaymentNotFoundException {
         if (bookingId == null) {
             throw new PaymentNotFoundException(MessageCode.PAYMENT_NOT_FOUND_BY_BOOKING);
         }
 
-        Optional<PaymentEntity> optional = paymentRepository.findByBookingId(bookingId);
-        if (optional.isEmpty()) {
+        List<PaymentEntity> payments = paymentRepository.findByBookingId(bookingId);
+        if (payments.isEmpty()) {
             throw new PaymentNotFoundException(MessageCode.PAYMENT_NOT_FOUND_BY_BOOKING);
         }
-        return new PaymentDTO(optional.get());
+        return payments.stream()
+                .map(PaymentDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override

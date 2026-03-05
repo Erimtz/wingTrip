@@ -13,7 +13,7 @@ public interface PaymentService {
 
     PaymentDTO findById(Long paymentId) throws PaymentNotFoundException;
 
-    PaymentDTO findByBookingId(Long bookingId) throws PaymentNotFoundException;
+    List<PaymentDTO> findByBookingId(Long bookingId) throws PaymentNotFoundException;
 
     List<PaymentDTO> findByStatus(PaymentStatus status) throws PaymentNotFoundException;
 

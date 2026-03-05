@@ -65,7 +65,7 @@ public interface PaymentControllerDoc {
             ),
             @ApiResponse(responseCode = "404", description = "Payment not found for the provided booking ID", content = @Content)
     })
-    ResponseEntity<PaymentResponse> findByBookingId(@PathVariable Long bookingId) throws PaymentNotFoundException;
+    ResponseEntity<List<PaymentResponse>> findByBookingId(@PathVariable Long bookingId) throws PaymentNotFoundException;
 
     @Operation(summary = "Find payments by status",
             description = "Search and return all payments with a specific status.")
