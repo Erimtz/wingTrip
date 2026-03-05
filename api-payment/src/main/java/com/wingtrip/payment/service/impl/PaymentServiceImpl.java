@@ -92,12 +92,12 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentEntity entity = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new PaymentNotFoundException(MessageCode.PAYMENT_NOT_FOUND_BY_ID));
 
-        if (entity.getPaymentStatus() == PaymentStatus.COMPLETED) {
+        if (entity.getPaymentStatus() == PaymentStatus.SUCCESS) {
             throw new PaymentAlreadyProcessedException(MessageCode.PAYMENT_ALREADY_PROCESSED);
         }
 
         try {
-            entity.setPaymentStatus(PaymentStatus.COMPLETED);
+            entity.setPaymentStatus(PaymentStatus.SUCCESS);
             entity.setPaymentDate(LocalDateTime.now());
             entity.setUpdatedAt(LocalDateTime.now());
             PaymentEntity updated = paymentRepository.save(entity);
@@ -119,7 +119,7 @@ public class PaymentServiceImpl implements PaymentService {
             throw new PaymentAlreadyRefundedException(MessageCode.PAYMENT_ALREADY_REFUNDED);
         }
 
-        if (entity.getPaymentStatus() != PaymentStatus.COMPLETED) {
+        if (entity.getPaymentStatus() != PaymentStatus.SUCCESS) {
             throw new PaymentCannotBeRefundedException(MessageCode.PAYMENT_CANNOT_BE_REFUNDED);
         }
 
