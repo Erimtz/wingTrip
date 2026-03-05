@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Log4j2
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(name = "/api/v1/payment")
+@RequestMapping(path = "/api/v1/payment")
 public class PaymentController implements PaymentControllerDoc {
 
     private final PaymentMapper paymentMapper;
