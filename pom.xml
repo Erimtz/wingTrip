@@ -35,5 +35,6 @@
 		<module>eureka-server</module>
 		<module>config-server</module>
         <module>api-booking</module>
-    </modules>
+		<module>api-payment</module>
+	</modules>
 </project>

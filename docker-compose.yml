@@ -53,6 +53,31 @@ services:
       interval: 10s
       start_period: 40s
 
+  mysql-payment:
+    image: mysql:8.0
+    container_name: mysql-payment
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+      MYSQL_DATABASE: 'payment_db'
+      MYSQL_USER: ${PAYMENT_DB_USER}
+      MYSQL_PASSWORD: ${PAYMENT_DB_PASS}
+    ports:
+      - '3312:3306'
+    volumes:
+      - mysql-payment-data:/var/lib/mysql
+      - ./api-payment/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
+      - ./api-payment/src/main/resources/data.sql:/docker-entrypoint-initdb.d/2_data.sql
+    env_file:
+      - .env
+    networks:
+      - wingtrip-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+      start_period: 40s
+
   config-server:
     build: ./config-server
     image: configserver:latest
@@ -185,6 +210,39 @@ services:
       start_period: 60s
     restart: on-failure
 
+  api-payment:
+    build: ./api-payment
+    container_name: api-payment
+    depends_on:
+      mysql-payment:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8083:8080"
+    env_file:
+      - .env
+    networks:
+      - wingtrip-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - EUREKA_CLIENT_FETCH_REGISTRY=true
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - EUREKA_CLIENT_HEALTHCHECK_ENABLED=true
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health" ]
+      timeout: 15s
+      retries: 5
+      interval: 30s
+      start_period: 60s
+    restart: on-failure
+
   api-gateway:
     build: ./api-gateway
     container_name: api-gateway
@@ -215,4 +273,5 @@ services:
 volumes:
   mysql-user-data:
   mysql-booking-data:
+  mysql-payment-data:
   rabbitmq-data:
