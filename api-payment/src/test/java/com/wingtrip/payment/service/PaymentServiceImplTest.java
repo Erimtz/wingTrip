@@ -1,4 +1,4 @@
-package service;
+package com.wingtrip.payment.service;
 
 import com.wingtrip.payment.dto.PaymentDTO;
 import com.wingtrip.payment.exception.*;

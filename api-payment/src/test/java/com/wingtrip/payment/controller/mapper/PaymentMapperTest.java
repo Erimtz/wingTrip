@@ -1,4 +1,4 @@
-package mapper;
+package com.wingtrip.payment.controller.mapper;
 
 import com.wingtrip.payment.controller.mapper.PaymentMapper;
 import com.wingtrip.payment.controller.request.CreatePaymentRequest;
