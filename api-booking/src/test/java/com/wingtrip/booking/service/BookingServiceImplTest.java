@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,7 +47,7 @@ class BookingServiceImplTest {
                 .adultPassengers(2)
                 .childPassengers(0)
                 .infantPassengers(0)
-                .totalAmount(450.00)
+                .totalAmount(new BigDecimal("450.00"))
                 .currency("USD")
                 .specialRequests("Window seats preferred")
                 .bookingNotes("Test booking")
@@ -61,7 +62,7 @@ class BookingServiceImplTest {
                 .adultPassengers(2)
                 .childPassengers(0)
                 .infantPassengers(0)
-                .totalAmount(450.00)
+                .totalAmount(new BigDecimal("450.00"))
                 .currency("USD")
                 .bookingStatus(BookingStatus.PENDING)
                 .specialRequests("Window seats preferred")

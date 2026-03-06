@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -31,7 +32,7 @@ public class CreateBookingRequest {
 
     private int infantPassengers;
 
-    private Double totalAmount;
+    private BigDecimal totalAmount;
 
     private String currency; // Opcional, default "USD"
 
