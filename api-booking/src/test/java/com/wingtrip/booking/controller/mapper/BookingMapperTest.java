@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +35,7 @@ class BookingMapperTest {
                 .adultPassengers(2)
                 .childPassengers(0)
                 .infantPassengers(0)
-                .totalAmount(450.00)
+                .totalAmount(new BigDecimal("450.00"))
                 .currency("USD")
                 .specialRequests("Window seats preferred")
                 .build();
@@ -49,7 +50,7 @@ class BookingMapperTest {
                 .adultPassengers(2)
                 .childPassengers(0)
                 .infantPassengers(0)
-                .totalAmount(450.00)
+                .totalAmount(new BigDecimal("450.00"))
                 .currency("USD")
                 .bookingStatus(BookingStatus.PENDING)
                 .specialRequests("Window seats preferred")
@@ -65,7 +66,7 @@ class BookingMapperTest {
                 .adultPassengers(2)
                 .childPassengers(0)
                 .infantPassengers(0)
-                .totalAmount(450.00)
+                .totalAmount(new BigDecimal("450.00"))
                 .currency("USD")
                 .bookingStatus(BookingStatus.PENDING)
                 .specialRequests("Window seats preferred")

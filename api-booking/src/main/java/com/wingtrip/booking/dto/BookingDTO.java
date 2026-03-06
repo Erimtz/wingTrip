@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -25,7 +26,7 @@ public class BookingDTO {
     private int childPassengers;
     private int infantPassengers;
     private int totalPassengers;
-    private Double totalAmount;
+    private BigDecimal totalAmount;
     private String currency;
     private BookingStatus bookingStatus;
     private String specialRequests;
