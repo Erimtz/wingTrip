@@ -6,6 +6,9 @@ import com.wingtrip.payment.model.PaymentEntity;
 import com.wingtrip.payment.model.PaymentStatus;
 import com.wingtrip.payment.repository.PaymentRepository;
 import com.wingtrip.payment.service.PaymentService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -89,6 +92,9 @@ public class PaymentServiceImpl implements PaymentService {
                 .collect(Collectors.toList());
     }
 
+    @CircuitBreaker(name = "paymentService", fallbackMethod = "processPaymentFallback")
+    @Retry(name = "paymentService")
+    @RateLimiter(name = "paymentService")
     @Override
     public PaymentDTO processPayment(Long paymentId) throws PaymentNotFoundException, PaymentAlreadyProcessedException, PaymentFailedException {
         PaymentEntity entity = paymentRepository.findById(paymentId)
@@ -112,6 +118,13 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    public PaymentDTO processPaymentFallback(Long paymentId, Exception ex) throws PaymentFailedException {
+        throw new PaymentFailedException(MessageCode.PAYMENT_FAILED);
+    }
+
+    @CircuitBreaker(name = "paymentService", fallbackMethod = "refundPaymentFallback")
+    @Retry(name = "paymentService")
+    @RateLimiter(name = "paymentService")
     @Override
     public PaymentDTO refundPayment(Long paymentId) throws PaymentNotFoundException, PaymentAlreadyRefundedException, PaymentCannotBeRefundedException {
         PaymentEntity entity = paymentRepository.findById(paymentId)
@@ -129,6 +142,10 @@ public class PaymentServiceImpl implements PaymentService {
         entity.setUpdatedAt(LocalDateTime.now());
         PaymentEntity updated = paymentRepository.save(entity);
         return new PaymentDTO(updated);
+    }
+
+    public PaymentDTO refundPaymentFallback(Long paymentId, Exception ex) throws PaymentCannotBeRefundedException {
+        throw new PaymentCannotBeRefundedException(MessageCode.PAYMENT_CANNOT_BE_REFUNDED);
     }
 
     @Override
