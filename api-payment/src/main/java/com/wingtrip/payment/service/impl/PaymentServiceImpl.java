@@ -1,9 +1,11 @@
 package com.wingtrip.payment.service.impl;
 
 import com.wingtrip.payment.dto.PaymentDTO;
+import com.wingtrip.payment.event.PaymentEventDTO;
 import com.wingtrip.payment.exception.*;
 import com.wingtrip.payment.model.PaymentEntity;
 import com.wingtrip.payment.model.PaymentStatus;
+import com.wingtrip.payment.publisher.PaymentEventPublisher;
 import com.wingtrip.payment.repository.PaymentRepository;
 import com.wingtrip.payment.service.PaymentService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final PaymentEventPublisher paymentEventPublisher;
 
 
     @Override
@@ -109,6 +112,17 @@ public class PaymentServiceImpl implements PaymentService {
             entity.setPaymentDate(LocalDateTime.now());
             entity.setUpdatedAt(LocalDateTime.now());
             PaymentEntity updated = paymentRepository.save(entity);
+
+            PaymentEventDTO event = PaymentEventDTO.builder()
+                    .paymentId(updated.getPaymentId())
+                    .bookingId(updated.getBookingId())
+                    .amount(updated.getAmount())
+                    .currency(updated.getCurrency())
+                    .paymentStatus(updated.getPaymentStatus())
+                    .paymentDate(updated.getPaymentDate())
+                    .build();
+            paymentEventPublisher.publishPaymentProcessed(event);
+
             return new PaymentDTO(updated);
         } catch (Exception e) {
             entity.setPaymentStatus(PaymentStatus.FAILED);

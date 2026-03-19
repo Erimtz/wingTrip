@@ -189,6 +189,8 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     ports:
       - "8082:8080"
     env_file:
