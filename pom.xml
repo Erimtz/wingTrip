@@ -36,5 +36,6 @@
 		<module>config-server</module>
         <module>api-booking</module>
 		<module>api-payment</module>
-	</modules>
+        <module>api-flight</module>
+    </modules>
 </project>
