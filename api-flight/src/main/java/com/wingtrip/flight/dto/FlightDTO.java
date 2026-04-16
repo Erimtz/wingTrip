@@ -1,6 +1,6 @@
 package com.wingtrip.flight.dto;
 
-import com.wingtrip.flight.model.Flight;
+import com.wingtrip.flight.model.FlightEntity;
 import com.wingtrip.flight.model.FlightStatus;
 import com.wingtrip.flight.model.ServiceClass;
 import lombok.*;
@@ -32,7 +32,7 @@ public class FlightDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public FlightDTO(Flight document) {
+    public FlightDTO(FlightEntity document) {
         this.id = document.getId();
         this.flightNumber = document.getFlightNumber();
         this.airline = document.getAirline();

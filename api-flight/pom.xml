@@ -134,6 +134,10 @@
             <version>4.12.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
