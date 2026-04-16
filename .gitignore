@@ -6,3 +6,6 @@ target/
 *.war
 *.class
 *.original
+
+# Security and Credentials
+.env
