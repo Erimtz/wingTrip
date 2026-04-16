@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Document(collection = "flights")
-public class FlightDocument {
+public class Flight {
 
     @Id
     private String id;
