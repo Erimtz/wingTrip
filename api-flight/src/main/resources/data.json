@@ -1,7 +1,7 @@
 {
   "flights": [
     {
-      "_id": 101,
+      "id": "101",
       "flightNumber": "AA101",
       "airline": "American Airlines",
       "originAirport": "LAX",
@@ -12,15 +12,15 @@
       "currency": "USD",
       "availableSeats": 150,
       "totalSeats": 180,
-      "status": "ACTIVE",
-      "isDirect": true,
+      "status": "SCHEDULED",
+      "directFlight": true,
       "stops": 0,
       "serviceClass": "ECONOMY",
       "createdAt": "2025-01-01T00:00:00Z",
-      "UpdateAt": "2025-01-01T00:00:00Z"
+      "updateAt": "2025-01-01T00:00:00Z"
     },
     {
-      "_id": 102,
+      "id": "102",
       "flightNumber": "DL102",
       "airline": "Delta Airlines",
       "originAirport": "ORD",
@@ -31,15 +31,15 @@
       "currency": "USD",
       "availableSeats": 89,
       "totalSeats": 120,
-      "status": "ACTIVE",
-      "isDirect": false,
+      "status": "SCHEDULED",
+      "directFlight": false,
       "stops": 1,
       "serviceClass": "ECONOMY",
       "createdAt": "2025-01-01T00:00:00Z",
-      "UpdateAt": "2025-01-01T00:00:00Z"
+      "updateAt": "2025-01-01T00:00:00Z"
     },
     {
-      "_id": 103,
+      "id": "103",
       "flightNumber": "UA103",
       "airline": "United Airlines",
       "originAirport": "SFO",
@@ -50,15 +50,15 @@
       "currency": "USD",
       "availableSeats": 45,
       "totalSeats": 160,
-      "status": "ACTIVE",
-      "isDirect": true,
+      "status": "SCHEDULED",
+      "directFlight": true,
       "stops": 0,
       "serviceClass": "BUSINESS",
       "createdAt": "2025-01-01T00:00:00Z",
-      "UpdateAt": "2025-01-01T00:00:00Z"
+      "updateAt": "2025-01-01T00:00:00Z"
     },
     {
-      "_id": 104,
+      "id": "104",
       "flightNumber": "SW104",
       "airline": "Southwest Airlines",
       "originAirport": "DEN",
@@ -69,15 +69,15 @@
       "currency": "USD",
       "availableSeats": 110,
       "totalSeats": 200,
-      "status": "ACTIVE",
-      "isDirect": false,
+      "status": "SCHEDULED",
+      "directFlight": false,
       "stops": 1,
       "serviceClass": "ECONOMY",
       "createdAt": "2025-01-01T00:00:00Z",
-      "UpdateAt": "2025-01-01T00:00:00Z"
+      "updateAt": "2025-01-01T00:00:00Z"
     },
     {
-      "_id": 105,
+      "id": "105",
       "flightNumber": "BA105",
       "airline": "British Airways",
       "originAirport": "LHR",
@@ -89,11 +89,11 @@
       "availableSeats": 200,
       "totalSeats": 250,
       "status": "CANCELLED",
-      "isDirect": true,
+      "directFlight": true,
       "stops": 0,
       "serviceClass": "ECONOMY",
       "createdAt": "2025-01-01T00:00:00Z",
-      "UpdateAt": "2025-01-01T00:00:00Z"
+      "updateAt": "2025-01-01T00:00:00Z"
     }
   ]
 }

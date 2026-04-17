@@ -1,6 +1,5 @@
 package com.wingtrip.flight.dto;
 
-import com.wingtrip.flight.model.FlightEntity;
 import com.wingtrip.flight.model.FlightStatus;
 import com.wingtrip.flight.model.ServiceClass;
 import lombok.*;
@@ -26,7 +25,7 @@ public class FlightDTO {
     private int availableSeats;
     private int totalSeats;
     private FlightStatus status;
-    private boolean isDirect;
+    private boolean directFlight;
     private int stops;
     private ServiceClass serviceClass;
     private LocalDateTime createdAt;

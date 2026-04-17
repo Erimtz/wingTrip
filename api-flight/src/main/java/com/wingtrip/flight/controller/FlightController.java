@@ -35,7 +35,7 @@ public class FlightController {
     private final FlightMapper flightMapper;
 
     /**
-     * Obtiene todos los vuelos disponibles
+     * Get all available flights
      */
     @GetMapping
     @Operation(summary = "Get all flights", description = "Returns a list of all available flights")
@@ -52,7 +52,7 @@ public class FlightController {
     }
 
     /**
-     * Obtiene un vuelo específico por su número
+     * You get a specific flight based on your number.
      */
     @GetMapping("/{flightNumber}")
     @Operation(summary = "Get flight by number", description = "You get a specific flight using your flight number")
@@ -71,7 +71,7 @@ public class FlightController {
     }
 
     /**
-     * Busca vuelos por origen, destino y fecha
+     * Search for flights by origin, destination, and date
      */
     @GetMapping("/search")
     @Operation(summary = "Search for flights", description = "Search for flights by origin, destination, and departure date")
@@ -91,7 +91,7 @@ public class FlightController {
     }
 
     /**
-     * Crea un nuevo vuelo
+     * Create a new flight
      */
     @PostMapping
     @Operation(summary = "Create new flight", description = "Create a new flight in the system")
@@ -110,7 +110,7 @@ public class FlightController {
     }
 
     /**
-     * Actualiza un vuelo existente
+     * Update an existing flight
      */
     @PutMapping("/{flightNumber}")
     @Operation(summary = "Flight Update", description = "Update an existing flight")
@@ -131,7 +131,7 @@ public class FlightController {
     }
 
     /**
-     * Elimina un vuelo
+     * Cancel a flight
      */
     @DeleteMapping("/{flightNumber}")
     @Operation(summary = "Cancel flight", description = "Remove a flight from the system")

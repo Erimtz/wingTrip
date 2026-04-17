@@ -14,52 +14,52 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Schema(description = "Response con los datos del vuelo")
+@Schema(description = "Response with flight data")
 public class FlightResponse {
 
-    @Schema(description = "ID único del vuelo", example = "507f1f77bcf86cd799439011")
+    @Schema(description = "Unique flight ID", example = "507f1f77bcf86cd799439011")
     private String id;
 
-    @Schema(description = "Número único del vuelo", example = "AA1234")
+    @Schema(description = "Unique flight number", example = "AA1234")
     private String flightNumber;
 
-    @Schema(description = "Nombre de la aerolínea", example = "American Airlines")
+    @Schema(description = "Airline name", example = "American Airlines")
     private String airline;
 
-    @Schema(description = "Código del aeropuerto de origen", example = "JFK")
+    @Schema(description = "Origin airport code", example = "JFK")
     private String originAirport;
 
-    @Schema(description = "Código del aeropuerto de destino", example = "LAX")
+    @Schema(description = "Destination airport code", example = "LAX")
     private String destinationAirport;
 
-    @Schema(description = "Fecha y hora de salida", example = "2026-08-15T10:30:00")
+    @Schema(description = "Date and time of departure", example = "2026-08-15T10:30:00")
     private LocalDateTime departureTime;
 
-    @Schema(description = "Fecha y hora de llegada", example = "2026-08-15T13:30:00")
+    @Schema(description = "Date and time of arrival", example = "2026-08-15T13:30:00")
     private LocalDateTime arrivalTime;
 
-    @Schema(description = "Precio del vuelo", example = "250.50")
+    @Schema(description = "Flight price", example = "250.50")
     private BigDecimal price;
 
-    @Schema(description = "Código de moneda", example = "USD")
+    @Schema(description = "Currency code", example = "USD")
     private String currency;
 
-    @Schema(description = "Asientos disponibles actualmente", example = "150")
+    @Schema(description = "Seats currently available", example = "150")
     private int availableSeats;
 
-    @Schema(description = "Total de asientos", example = "200")
+    @Schema(description = "Total number of seats", example = "200")
     private int totalSeats;
 
-    @Schema(description = "Estado del vuelo", example = "ACTIVE")
+    @Schema(description = "Flight status", example = "ACTIVE")
     private String status;
 
-    @Schema(description = "Indica si el vuelo es directo", example = "true")
-    private boolean isDirect;
+    @Schema(description = "Indicates if the flight is direct", example = "true")
+    private boolean directFlight;
 
-    @Schema(description = "Número de paradas", example = "0")
+    @Schema(description = "Number of stops", example = "0")
     private int stops;
 
-    @Schema(description = "Clase de servicio", example = "ECONOMY")
+    @Schema(description = "Class of service", example = "ECONOMY")
     private ServiceClass serviceClass;
 }
 

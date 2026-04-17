@@ -24,9 +24,9 @@ public interface FlightRepository extends MongoRepository<FlightEntity, String> 
     List<FlightEntity> findByOriginAirportAndDestinationAirportAndStatus(String origin, String destination, String status);
 
     /**
-     * Busca vuelos por origen, destino y rango de fecha de salida
+     * Search for flights by origin, destination, and departure date range
      */
-    List<FlightEntity> findByOriginAirportAndDestinationAirportAndDepartureBetween(
+    List<FlightEntity> findByOriginAirportAndDestinationAirportAndDepartureTimeBetween(
             String originAirport,
             String destinationAirport,
             LocalDateTime startDeparture,

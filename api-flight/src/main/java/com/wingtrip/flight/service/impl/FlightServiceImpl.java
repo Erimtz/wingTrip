@@ -64,7 +64,7 @@ public class FlightServiceImpl implements FlightService {
             LocalDateTime startOfDay = date.atStartOfDay();
             LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
-            return flightRepository.findByOriginAirportAndDestinationAirportAndDepartureBetween(
+            return flightRepository.findByOriginAirportAndDestinationAirportAndDepartureTimeBetween(
                     origin, destination, startOfDay, endOfDay)
                     .stream()
                     .map(flightMapper::toDTO)
@@ -97,7 +97,7 @@ public class FlightServiceImpl implements FlightService {
                     .availableSeats(flightDTO.getAvailableSeats())
                     .totalSeats(flightDTO.getTotalSeats())
                     .status(FlightStatus.SCHEDULED)
-                    .isDirect(flightDTO.isDirect())
+                    .directFlight(flightDTO.isDirectFlight())
                     .stops(flightDTO.getStops())
                     .serviceClass(flightDTO.getServiceClass())
                     .createdAt(LocalDateTime.now())
