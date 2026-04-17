@@ -32,23 +32,4 @@ public class FlightDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public FlightDTO(FlightEntity document) {
-        this.id = document.getId();
-        this.flightNumber = document.getFlightNumber();
-        this.airline = document.getAirline();
-        this.originAirport = document.getOriginAirport();
-        this.destinationAirport = document.getDestinationAirport();
-        this.departureTime = document.getDepartureTime();
-        this.arrivalTime = document.getArrivalTime();
-        this.price = document.getPrice();
-        this.currency = document.getCurrency();
-        this.availableSeats = document.getAvailableSeats();
-        this.totalSeats = document.getTotalSeats();
-        this.status = document.getStatus();
-        this.isDirect = document.isDirect();
-        this.stops = document.getStops();
-        this.serviceClass = document.getServiceClass();
-        this.createdAt = document.getCreatedAt();
-        this.updatedAt = document.getUpdatedAt();
-    }
 }

@@ -43,16 +43,12 @@ public interface FlightMapper {
      * Convierte FlightDTO a FlightResponse
      */
     @Mapping(target = "status", source = "status")
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
     FlightResponse toResponse(FlightDTO dto);
 
     /**
      * Convierte FlightEntity a FlightResponse
      */
     @Mapping(target = "status", source = "status")
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
     FlightResponse entityToResponse(FlightEntity entity);
 
     /**
