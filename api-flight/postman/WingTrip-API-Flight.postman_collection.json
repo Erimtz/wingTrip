@@ -1,0 +1,175 @@
+{
+  "info": {
+    "_postman_id": "9ead405e-99a8-489c-a82d-c6da5ee875d7",
+    "name": "WingTrip-API-Flight",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "18573665"
+  },
+  "item": [
+    {
+      "name": "Get all flights",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8084/api/v1/flights",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8084",
+          "path": [
+            "api",
+            "v1",
+            "flights"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Flight by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8084/api/v1/flights/AA101",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8084",
+          "path": [
+            "api",
+            "v1",
+            "flights",
+            "AA101"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search flights",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8084/api/v1/flights/search?origin=LAX&destination=JFK&departureDate=2025-08-15",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8084",
+          "path": [
+            "api",
+            "v1",
+            "flights",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "origin",
+              "value": "LAX",
+              "type": "text"
+            },
+            {
+              "key": "destination",
+              "value": "JFK",
+              "type": "text"
+            },
+            {
+              "key": "departureDate",
+              "value": "2025-08-15",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create new flight",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"flightNumber\": \"AA201\",\r\n  \"airline\": \"American Airlines\",\r\n  \"originAirport\": \"LAX\",\r\n  \"destinationAirport\": \"JFK\",\r\n  \"departureTime\": \"2025-08-15T10:00:00\",\r\n  \"arrivalTime\": \"2025-08-15T18:00:00\",\r\n  \"price\": 450,\r\n  \"currency\": \"USD\",\r\n  \"availableSeats\": 150,\r\n  \"totalSeats\": 180,\r\n  \"status\": \"SCHEDULED\",\r\n  \"directFlight\": true,\r\n  \"stops\": 0,\r\n  \"serviceClass\": \"ECONOMY\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8084/api/v1/flights",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8084",
+          "path": [
+            "api",
+            "v1",
+            "flights"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update flight",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"airline\": \"American Airlines\",\r\n  \"price\": 499,\r\n  \"availableSeats\": 140,\r\n  \"status\": \"SCHEDULED\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8084/api/v1/flights/AA201",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8084",
+          "path": [
+            "api",
+            "v1",
+            "flights",
+            "AA201"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete flight by id",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8084/api/v1/flights/BA105",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8084",
+          "path": [
+            "api",
+            "v1",
+            "flights",
+            "BA105"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

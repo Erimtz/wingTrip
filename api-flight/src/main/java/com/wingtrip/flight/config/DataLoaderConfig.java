@@ -2,7 +2,7 @@ package com.wingtrip.flight.config;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wingtrip.flight.model.Flight;
+import com.wingtrip.flight.model.FlightEntity;
 import com.wingtrip.flight.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,16 +40,16 @@ public class DataLoaderConfig {
                 InputStream inputStream = resource.getInputStream();
 
                 // Parsear el JSON
-                Map<String, List<Flight>> dataMap = objectMapper.readValue(
+                Map<String, List<FlightEntity>> dataMap = objectMapper.readValue(
                     inputStream,
-                    new TypeReference<Map<String, List<Flight>>>() {}
+                    new TypeReference<Map<String, List<FlightEntity>>>() {}
                 );
 
-                List<Flight> flights = dataMap.get("flights");
+                List<FlightEntity> flightEntities = dataMap.get("flights");
 
-                if (flights != null && !flights.isEmpty()) {
-                    flightRepository.saveAll(flights);
-                    log.info("✅ {} flights loaded successfully into MongoDB", flights.size());
+                if (flightEntities != null && !flightEntities.isEmpty()) {
+                    flightRepository.saveAll(flightEntities);
+                    log.info("✅ {} flights loaded successfully into MongoDB", flightEntities.size());
                 } else {
                     log.warn("⚠️ No flights found in data.json");
                 }

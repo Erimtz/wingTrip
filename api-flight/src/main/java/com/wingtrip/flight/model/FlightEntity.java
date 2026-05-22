@@ -1,5 +1,6 @@
 package com.wingtrip.flight.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Document(collection = "flights")
-public class Flight {
+public class FlightEntity {
 
     @Id
     private String id;
@@ -53,7 +54,8 @@ public class Flight {
     private FlightStatus status;
 
     @Field("is_direct")
-    private boolean isDirect;
+    @JsonProperty("directFlight")
+    private boolean directFlight;
 
     @Field("stops")
     private int stops;
