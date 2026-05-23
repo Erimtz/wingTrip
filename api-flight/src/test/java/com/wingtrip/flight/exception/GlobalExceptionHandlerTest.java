@@ -14,12 +14,11 @@ import org.springframework.http.ResponseEntity;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.wingtrip.flight.exception.MessageCode.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class GlobalExceptionHandlerTest {
+class GlobalExceptionHandlerTest {
 
     @InjectMocks
     private GlobalExceptionHandler globalExceptionHandler;
