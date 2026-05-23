@@ -21,14 +21,32 @@ import static com.wingtrip.flight.constant.Constant.*;
 public class GlobalExceptionHandler {
 
 
+    /**
+     * Maneja FlightNotFoundException → 404
+     */
+    @ExceptionHandler(FlightNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleFlightNotFoundException(
+            HttpServletRequest req, FlightNotFoundException ex) {
+        Map<String, Object> result = new HashMap<>();
+        result.put(TIMESTAMP, System.currentTimeMillis());
+        result.put(STATUS, HttpStatus.NOT_FOUND.value());
+        result.put(ERROR, ex.getMessage());
+        result.put(PATH, new UrlPathHelper().getPathWithinApplication(req));
+        log.error("Flight not found exception: {}", ex.getMessage());
+        return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Maneja el resto de excepciones de vuelo → 400
+     */
     @ExceptionHandler({
-            FlightNotFoundException.class,
             FlightNotCreatedException.class,
             FlightNotUpdatedException.class,
             FlightNotDeletedException.class,
             FlightAlreadyCancelledException.class
     })
-    public ResponseEntity<Map<String, Object>> handleFlightException(HttpServletRequest req, Exception ex) {
+    public ResponseEntity<Map<String, Object>> handleFlightException(
+            HttpServletRequest req, Exception ex) {
         Map<String, Object> result = new HashMap<>();
         result.put(TIMESTAMP, System.currentTimeMillis());
         result.put(STATUS, HttpStatus.BAD_REQUEST.value());
@@ -39,20 +57,11 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Maneja excepciones genéricas
+     * Maneja excepciones genéricas → 500
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGenericException(HttpServletRequest req, Exception ex) {
-
-        // Si es una excepción de Flight, no procesarla aquí
-        if (ex instanceof FlightNotFoundException ||
-                ex instanceof FlightNotCreatedException ||
-                ex instanceof FlightNotUpdatedException ||
-                ex instanceof FlightNotDeletedException ||
-                ex instanceof FlightAlreadyCancelledException) {
-            return null;
-        }
-
+    public ResponseEntity<Map<String, Object>> handleGenericException(
+            HttpServletRequest req, Exception ex) {
         Map<String, Object> result = new HashMap<>();
         result.put(TIMESTAMP, System.currentTimeMillis());
         result.put(STATUS, HttpStatus.INTERNAL_SERVER_ERROR.value());
