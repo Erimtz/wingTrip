@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: api-flight-details
+  cloud:
+    config:
+      enabled: true
+      uri: http://config-server:8888
+      fail-fast: true
+      retry:
+        initial-interval: 1000
+        max-attempts: 6
+        max-interval: 2000
+        multiplier: 1.1
+
+  logging:
+    level:
+      org.springframework.data.mongodb: DEBUG
+    jackson:
+      serialization:
+        FAIL_ON_EMPTY_BEANS: false
+      deserialization:
+        FAIL_ON_UNKNOWN_PROPERTIES: false
+
+  springdoc:
+    api-docs:
+      path: /v3/api-docs
+      enabled: true
+    swagger-ui:
+      path: /swagger-ui.html
+      enabled: true
+    show-actuator: true
+    packages-to-scan: com.wingtrip.flight.details.controller
+    default-consumes-media-type: application/json
+    default-produces-media-type: application/json
+

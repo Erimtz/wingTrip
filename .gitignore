@@ -8,4 +8,7 @@ target/
 *.original
 
 # Security and Credentials
-.env
+.env*
+
+# IDE files
+*.iml
