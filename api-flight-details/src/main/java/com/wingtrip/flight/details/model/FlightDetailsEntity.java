@@ -49,6 +49,9 @@ public class FlightDetailsEntity {
     @Field("available_wifi_connection")
     private Boolean availableWifiConnection;
 
+    @Field("entertainment_options")
+    private String entertainmentOptions;
+
     @Field("flight_id")
     private String flightId;
 

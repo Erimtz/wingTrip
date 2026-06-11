@@ -22,6 +22,7 @@ public class FlightDetailsDTO {
     private String seatSelectionPolicy;
     private String mealService;
     private Boolean availableWifiConnection;
+    private String entertainmentOptions;
     private String flightId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -1,0 +1,345 @@
+{
+  "info": {
+    "_postman_id": "5945edc0-1317-47d0-8f08-5c7190d5a5a8",
+    "name": "WingTrip-API-FlightDetails",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "18573665"
+  },
+  "item": [
+    {
+      "name": "Get all flight details",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8085/api/v1/flight-details",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8085",
+          "path": [
+            "api",
+            "v1",
+            "flight-details"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Find flight detail by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8085/api/v1/flight-details/6a2b357e18a66a771c15fb53",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8085",
+          "path": [
+            "api",
+            "v1",
+            "flight-details",
+            "6a2b357e18a66a771c15fb53"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search by flight ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8085/api/v1/flight-details/flight/FL-2024-001",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8085",
+          "path": [
+            "api",
+            "v1",
+            "flight-details",
+            "flight",
+            "FL-2024-001"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search by baggage",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8085/api/v1/flight-details/search/baggage?cabinBaggage=true&checkedBaggage=false",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8085",
+          "path": [
+            "api",
+            "v1",
+            "flight-details",
+            "search",
+            "baggage"
+          ],
+          "query": [
+            {
+              "key": "cabinBaggage",
+              "value": "true",
+              "type": "text"
+            },
+            {
+              "key": "checkedBaggage",
+              "value": "false",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search by amenities",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8085/api/v1/flight-details/search/amenities?wifi=true&mealService=STANDARD",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8085",
+          "path": [
+            "api",
+            "v1",
+            "flight-details",
+            "search",
+            "amenities"
+          ],
+          "query": [
+            {
+              "key": "wifi",
+              "value": "true",
+              "type": "text"
+            },
+            {
+              "key": "mealService",
+              "value": "STANDARD",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search by price range",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8085/api/v1/flight-details/search/price?minPrice=10.00&maxPrice=50.00",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8085",
+          "path": [
+            "api",
+            "v1",
+            "flight-details",
+            "search",
+            "price"
+          ],
+          "query": [
+            {
+              "key": "minPrice",
+              "value": "10.00"
+            },
+            {
+              "key": "maxPrice",
+              "value": "50.00"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search by aircraft model",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8085/api/v1/flight-details/search/aircraft?aircraftModel=Boeing 737",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8085",
+          "path": [
+            "api",
+            "v1",
+            "flight-details",
+            "search",
+            "aircraft"
+          ],
+          "query": [
+            {
+              "key": "aircraftModel",
+              "value": "Boeing 737",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search by meal service",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8085/api/v1/flight-details/search/meal?mealService=VEGETARIAN",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8085",
+          "path": [
+            "api",
+            "v1",
+            "flight-details",
+            "search",
+            "meal"
+          ],
+          "query": [
+            {
+              "key": "mealService",
+              "value": "VEGETARIAN",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create new flight details",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"flightId\": \"FL-2024-001\",\r\n  \"aircraftModel\": \"Boeing 737\",\r\n  \"gateNumber\": \"B12\",\r\n  \"terminalOrigin\": \"T1\",\r\n  \"terminalDestination\": \"T2\",\r\n  \"includesCabinBaggage\": true,\r\n  \"includesCheckedBaggage\": false,\r\n  \"extraBaggagePrice\": 25.00,\r\n  \"seatSelectionPolicy\": \"PAID\",\r\n  \"mealService\": \"STANDARD\",\r\n  \"availableWifiConnection\": true,\r\n  \"entertainmentOptions\": \"Movies, Music\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8085/api/v1/flight-details",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8085",
+          "path": [
+            "api",
+            "v1",
+            "flight-details"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update flight details",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"flightId\": \"FL-2024-001\",\r\n  \"aircraftModel\": \"Airbus A320\",\r\n  \"gateNumber\": \"C5\",\r\n  \"terminalOrigin\": \"T1\",\r\n  \"terminalDestination\": \"T3\",\r\n  \"includesCabinBaggage\": true,\r\n  \"includesCheckedBaggage\": true,\r\n  \"extraBaggagePrice\": 30.00,\r\n  \"seatSelectionPolicy\": \"FREE\",\r\n  \"mealService\": \"VEGETARIAN\",\r\n  \"availableWifiConnection\": false,\r\n  \"entertainmentOptions\": \"Movies\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8085/api/v1/flight-details/6a2b357e18a66a771c15fb53",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8085",
+          "path": [
+            "api",
+            "v1",
+            "flight-details",
+            "6a2b357e18a66a771c15fb53"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete by ID",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8085/api/v1/flight-details/6a2b357e18a66a771c15fb53",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8085",
+          "path": [
+            "api",
+            "v1",
+            "flight-details",
+            "6a2b357e18a66a771c15fb53"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete by flight ID",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8085/api/v1/flight-details/flight/FL-2024-001",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8085",
+          "path": [
+            "api",
+            "v1",
+            "flight-details",
+            "flight",
+            "FL-2024-001"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
