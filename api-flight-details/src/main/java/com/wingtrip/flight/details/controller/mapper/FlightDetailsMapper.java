@@ -6,6 +6,8 @@ import com.wingtrip.flight.details.controller.response.FlightDetailsResponse;
 import com.wingtrip.flight.details.dto.FlightDetailsDTO;
 import com.wingtrip.flight.details.model.FlightDetailsEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.stereotype.Component;
@@ -50,6 +52,7 @@ public interface FlightDetailsMapper {
     /**
      * Actualiza FlightDetailsEntity con datos de UpdateFlightDetailsRequest
      */
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "flightId", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -59,6 +62,7 @@ public interface FlightDetailsMapper {
     /**
      * Convierte UpdateFlightDetailsRequest a FlightDetailsEntity
      */
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "flightId", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
