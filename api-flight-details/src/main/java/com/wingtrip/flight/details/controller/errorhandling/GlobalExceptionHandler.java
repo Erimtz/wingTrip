@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +13,7 @@ import org.springframework.web.util.UrlPathHelper;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.wingtrip.flight.details.constant.Constant.*;
 
@@ -96,6 +98,28 @@ public class GlobalExceptionHandler {
         result.put(ERROR, ex.getMessage());
         result.put(PATH, new UrlPathHelper().getPathWithinApplication(req));
         log.error("Flight details exception occurred: {}", ex.getMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Maneja errores de validación de @Valid en @RequestBody → 400
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationException(HttpServletRequest req,
+                                                                         MethodArgumentNotValidException ex) {
+        Map<String, Object> result = new HashMap<>();
+        result.put(TIMESTAMP, System.currentTimeMillis());
+        result.put(STATUS, HttpStatus.BAD_REQUEST.value());
+
+        String errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
+                .collect(Collectors.joining("; "));
+
+        result.put(ERROR, errors);
+        result.put(PATH, new UrlPathHelper().getPathWithinApplication(req));
+        log.error("Validation failed for request {}: {}", req.getRequestURI(), errors);
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 
