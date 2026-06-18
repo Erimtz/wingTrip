@@ -301,8 +301,6 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
     ports:
       - "8084:8080"
     env_file:
@@ -367,7 +365,13 @@ services:
         condition: service_healthy
       api-user:
         condition: service_started
+      api-booking:
+        condition: service_started
+      api-payment:
+        condition: service_started
       api-flight:
+        condition: service_started
+      api-flight-details:
         condition: service_started
     env_file:
       - .env
